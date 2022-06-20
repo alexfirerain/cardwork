@@ -5,7 +5,7 @@ import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
 import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.repository.AccountsRepository;
-import ru.netology.cardwork.service.provider.OperationIdProvider;
+import ru.netology.cardwork.providers.OperationIdProvider;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,18 +15,18 @@ public class TransferService {
 
     final private Map<String, Transfer> transfersInService;
 
-    final private OperationIdProvider plainOperationIdProvider;
+    final private OperationIdProvider operationIdProvider;
     final private AccountsRepository accountsRepository;
 
-    public TransferService(OperationIdProvider plainOperationIdProvider, AccountsRepository accountsRepository) {
-        this.plainOperationIdProvider = plainOperationIdProvider;
+    public TransferService(OperationIdProvider operationIdProvider, AccountsRepository accountsRepository) {
+        this.operationIdProvider = operationIdProvider;
         this.accountsRepository = accountsRepository;
         transfersInService = new ConcurrentHashMap<>();
     }
 
 
     public OperationIdDto bidTransferRequest(Transfer request) {
-        String operationId = plainOperationIdProvider.serveAnOperationId();
+        String operationId = operationIdProvider.serveAnOperationId();
         transfersInService.put(operationId, request);
         return new OperationIdDto(operationId);
     }

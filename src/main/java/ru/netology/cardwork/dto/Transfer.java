@@ -7,6 +7,12 @@ import ru.netology.cardwork.model.TransferAmount;
 
 import javax.validation.Valid;
 
+/**
+ * An object being received as a request on a transfer deal.
+ * It harbours a complete card definition of sender,
+ * a number of target card and an 'Transfer Amount' object
+ * representing the matter to be transferred.
+ */
 @AllArgsConstructor
 @Getter
 public class Transfer {

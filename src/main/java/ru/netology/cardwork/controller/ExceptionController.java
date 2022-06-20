@@ -1,29 +1,29 @@
 package ru.netology.cardwork.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.netology.cardwork.dto.ErrorResponseDto;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 @ControllerAdvice
 public class ExceptionController {
-    private static int idCount; // volatile?
-
-
+    private static AtomicInteger idCount;
 
     @ExceptionHandler(IllegalArgumentException.class)
-    ResponseEntity<ErrorResponseDto> handleBadRequest(IllegalArgumentException iae) {
-        return new ResponseEntity<>(
-                new ErrorResponseDto("Error in the request" + iae.getMessage(), idCount++),
-                HttpStatus.BAD_REQUEST);
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    ErrorResponseDto handleBadRequest(IllegalArgumentException iae) {
+        return new ErrorResponseDto("Error in the request: " + iae.getMessage(),
+                                                idCount.getAndIncrement());
     }
 
     @ExceptionHandler(Exception.class)
-    ResponseEntity<ErrorResponseDto> handleServerError(Exception e) {
-        return new ResponseEntity<>(
-                new ErrorResponseDto("Error at the server" + e.getMessage(), idCount++),
-                HttpStatus.INTERNAL_SERVER_ERROR);
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    ErrorResponseDto handleServerError(Exception e) {
+        return new ErrorResponseDto("Error at the server: " + e.getMessage(),
+                                                idCount.getAndIncrement());
     }
 
 }
