@@ -1,14 +1,12 @@
 package ru.netology.cardwork.providers;
 
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class PlainOperationIdProvider implements OperationIdProvider {
 
     /**

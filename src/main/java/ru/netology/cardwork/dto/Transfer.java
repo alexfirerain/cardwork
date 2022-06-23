@@ -6,6 +6,8 @@ import ru.netology.cardwork.model.Card;
 import ru.netology.cardwork.model.TransferAmount;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
 /**
  * An object being received as a request on a transfer deal.
@@ -18,6 +20,8 @@ import javax.validation.Valid;
 public class Transfer {
     @Valid
     private final Card cardFrom;
+    @NotBlank
+    @Pattern(regexp = "\\d{16,}")
     private final String cardTo;
     @Valid
     private final TransferAmount transferAmount;

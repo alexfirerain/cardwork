@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 @Validated
 public class Card {
     @NotBlank
-    @Pattern(regexp = "\\d{16}")
+    @Pattern(regexp = "\\d{16,}")
     private String cardNumber;
 
     @NotBlank

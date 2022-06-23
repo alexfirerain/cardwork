@@ -72,7 +72,7 @@ paths:
   /confirmOperation:
     post:
       summary: Confirm operation
-      description: Confirming operataion with code
+      description: Confirming operation with code
       requestBody:
         description: Confirm operation
         required: true
