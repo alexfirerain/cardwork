@@ -12,7 +12,7 @@ public class PlainOperationIdProvider implements OperationIdProvider {
     /**
      * A counter to serve a next number as an ID.
      */
-    private static AtomicLong idCount;
+    private static final AtomicLong idCount = new AtomicLong();
 
     /**
      * Provides a following integer as an ID.

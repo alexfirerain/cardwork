@@ -1,5 +1,6 @@
 package ru.netology.cardwork.controller;
 
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,8 +10,9 @@ import ru.netology.cardwork.dto.ErrorResponseDto;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @ControllerAdvice
+@NoArgsConstructor
 public class ExceptionController {
-    private static AtomicInteger idCount;
+    private static final AtomicInteger idCount = new AtomicInteger();
 
     @ExceptionHandler(IllegalArgumentException.class)
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)

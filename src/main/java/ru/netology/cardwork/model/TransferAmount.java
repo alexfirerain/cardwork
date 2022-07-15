@@ -8,6 +8,9 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+/**
+ * Representation for the particular transfer's properties: amount & currency.
+ */
 @AllArgsConstructor
 @Getter
 @Validated
