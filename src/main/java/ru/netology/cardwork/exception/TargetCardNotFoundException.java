@@ -1,4 +1,4 @@
 package ru.netology.cardwork.exception;
 
-public class TargetCardNotFoundException extends Exception {
+public class TargetCardNotFoundException extends TransferNotPossibleException {
 }

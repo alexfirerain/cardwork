@@ -1,4 +1,4 @@
 package ru.netology.cardwork.exception;
 
-public class CardDataNotValidException extends Exception {
+public class CardDataNotValidException extends TransferNotPossibleException {
 }

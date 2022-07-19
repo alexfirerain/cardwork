@@ -1,4 +1,4 @@
 package ru.netology.cardwork.exception;
 
-public class FundsInsufficientException extends Exception {
+public class FundsInsufficientException extends TransferNotPossibleException {
 }

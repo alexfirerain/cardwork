@@ -28,6 +28,7 @@ public class TransferService {
     public OperationIdDto bidTransferRequest(Transfer request) {
         String operationId = operationIdProvider.serveAnOperationId();
         transfersInService.put(operationId, request);
+        System.out.println("operation id = " + operationId);
         return new OperationIdDto(operationId);
     }
 

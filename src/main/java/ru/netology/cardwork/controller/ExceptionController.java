@@ -6,9 +6,13 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.netology.cardwork.dto.ErrorResponseDto;
+import ru.netology.cardwork.exception.TransferNotPossibleException;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Handler
+ */
 @ControllerAdvice
 @NoArgsConstructor
 public class ExceptionController {
@@ -21,10 +25,17 @@ public class ExceptionController {
                                                 idCount.getAndIncrement());
     }
 
+    @ExceptionHandler(TransferNotPossibleException.class)
+    @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
+    ErrorResponseDto handleTransferError(TransferNotPossibleException tnpe) {
+        return new ErrorResponseDto("Commiting the transfer not possible: " + tnpe.getMessage(),
+                                                idCount.getAndIncrement());
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
-    ErrorResponseDto handleServerError(Exception e) {
-        return new ErrorResponseDto("Error at the server: " + e.getMessage(),
+    ErrorResponseDto handleServerError(Exception se) {
+        return new ErrorResponseDto("Error at the server: " + se.getMessage(),
                                                 idCount.getAndIncrement());
     }
 

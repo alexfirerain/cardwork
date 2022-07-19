@@ -28,6 +28,7 @@ public class TransferController {
 
     @PostMapping("/transfer")
     public OperationIdDto acceptTransferRequest(@Valid Transfer request) {
+        System.out.println("request");
         return transferService.bidTransferRequest(request);
     }
 

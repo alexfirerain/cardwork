@@ -15,9 +15,15 @@ import javax.validation.constraints.Positive;
 @Getter
 @Validated
 public class TransferAmount {
+    /**
+     * Amount of funds to transfer.
+     */
     @NotNull
     @Positive
     private final Integer value;
+    /**
+     * Currency of funds to transfer.
+     */
     @NotBlank
     private final String currency;
 

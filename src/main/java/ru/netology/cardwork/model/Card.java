@@ -11,10 +11,12 @@ import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Getter
 @EqualsAndHashCode
-@AllArgsConstructor
 @NoArgsConstructor
 @Validated
 public class Card {
@@ -26,11 +28,17 @@ public class Card {
     @DateTimeFormat(pattern = "MM/YY")  // TODO: supply with concrete date check
     @Future
     @EqualsAndHashCode.Exclude
-    private String ValidTill;
+    private Date ValidTill;
 
     @NotBlank
     @Size(min = 3)
     @EqualsAndHashCode.Exclude
     private String cardCVV;
 
+    public Card(String cardNumber, String validTill, String cardCVV) throws ParseException {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
+        this.cardNumber = cardNumber;
+        ValidTill = dateFormatter.parse(validTill);
+        this.cardCVV = cardCVV;
+    }
 }
