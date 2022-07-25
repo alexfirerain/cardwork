@@ -33,11 +33,14 @@ public class Transfer {
                     String cardFromCVV,
                     String cardToNumber,
                     TransferAmount amount) throws ParseException {
+        System.out.println("Transfer constructor: " + cardFromNumber + cardFromValidTill + cardFromCVV + cardToNumber + amount.toString());         // monitor
+
         this.cardFrom = new Card(cardFromNumber,
                                 cardFromValidTill,
                                 cardFromCVV);
         this.cardTo = cardToNumber;
         this.transferAmount = amount;
-        System.out.println(this);
+
+        System.out.println("Transfer constructed: " + this);           // monitor
     }
 }

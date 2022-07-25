@@ -1,6 +1,5 @@
 package ru.netology.cardwork.model;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +24,7 @@ public class Card {
     private String cardNumber;
 
     @NotBlank
-    @DateTimeFormat(pattern = "MM/YY")  // TODO: supply with concrete date check
+    @DateTimeFormat(pattern = "MM/yy")  // TODO: supply with concrete date check
     @Future
     @EqualsAndHashCode.Exclude
     private Date ValidTill;
@@ -36,9 +35,12 @@ public class Card {
     private String cardCVV;
 
     public Card(String cardNumber, String validTill, String cardCVV) throws ParseException {
+        System.out.println("Card constructor: " + cardNumber + validTill + cardCVV);         // monitor
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
         this.cardNumber = cardNumber;
         ValidTill = dateFormatter.parse(validTill);
         this.cardCVV = cardCVV;
+
+        System.out.println("Card constructed: " + this);
     }
 }

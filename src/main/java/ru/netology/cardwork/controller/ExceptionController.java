@@ -28,7 +28,7 @@ public class ExceptionController {
     @ExceptionHandler(TransferNotPossibleException.class)
     @ResponseStatus(code = HttpStatus.INTERNAL_SERVER_ERROR)
     ErrorResponseDto handleTransferError(TransferNotPossibleException tnpe) {
-        return new ErrorResponseDto("Commiting the transfer not possible: " + tnpe.getMessage(),
+        return new ErrorResponseDto("Committing the transfer not possible: " + tnpe.getMessage(),
                                                 idCount.getAndIncrement());
     }
 
