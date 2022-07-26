@@ -22,13 +22,20 @@ public class TransferService {
         this.operationIdProvider = operationIdProvider;
         this.accountsRepository = accountsRepository;
         transfersInService = new ConcurrentHashMap<>();
+
+        System.out.println("TS initialized");
     }
 
 
     public OperationIdDto bidTransferRequest(Transfer request) {
+
+        System.out.println("TS received a request: " + request);
+
         String operationId = operationIdProvider.serveAnOperationId();
         transfersInService.put(operationId, request);
+
         System.out.println("operation id = " + operationId);
+
         return new OperationIdDto(operationId);
     }
 

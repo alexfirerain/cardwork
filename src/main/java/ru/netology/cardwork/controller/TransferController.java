@@ -25,17 +25,23 @@ public class TransferController {
 
     public TransferController(TransferService transferService) {
         this.transferService = transferService;
+
         System.out.println("TC initialized");
     }
 
     @PostMapping("/transfer")
     public OperationIdDto acceptTransferRequest(@RequestBody @Valid Transfer request) {
-        System.out.println("request");
+
+        System.out.println("request: " + request);
+
         return transferService.bidTransferRequest(request);
     }
 
     @PostMapping("/confirmOperation")
     public OperationIdDto confirmTransferRequest(@RequestBody @Valid ConfirmationDto confirmation) {
+
+        System.out.println("confirmation: " + confirmation);
+
         return transferService.commitTransferRequest(confirmation);
     }
 

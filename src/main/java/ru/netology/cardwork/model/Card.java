@@ -35,12 +35,16 @@ public class Card {
     private String cardCVV;
 
     public Card(String cardNumber, String validTill, String cardCVV) throws ParseException {
-        System.out.println("Card constructor: " + cardNumber + validTill + cardCVV);         // monitor
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
         this.cardNumber = cardNumber;
         ValidTill = dateFormatter.parse(validTill);
         this.cardCVV = cardCVV;
 
         System.out.println("Card constructed: " + this);
+    }
+
+    @Override
+    public String toString() {
+        return "Карта №" + cardNumber + " (действительна по " + ValidTill + ", CVV " + cardCVV + ")";
     }
 }
