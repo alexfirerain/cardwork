@@ -11,7 +11,7 @@ import ru.netology.cardwork.exception.TransferNotPossibleException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Handler
+ * Handler of exceptional cases
  */
 @ControllerAdvice
 @NoArgsConstructor

@@ -34,13 +34,20 @@ public class Card {
     @EqualsAndHashCode.Exclude
     private String cardCVV;
 
+    /**
+     * A model object representation of a bank Card.
+     * @param cardNumber    the card's unique id number.
+     * @param validTill     month and year in future when the card expires.
+     * @param cardCVV       a miscellaneous card's CVV.
+     * @throws ParseException   if extraction of date from string not successful.
+     */
     public Card(String cardNumber, String validTill, String cardCVV) throws ParseException {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
         this.cardNumber = cardNumber;
         ValidTill = dateFormatter.parse(validTill);
         this.cardCVV = cardCVV;
 
-        System.out.println("Card constructed: " + this);
+        System.out.println("Card constructed: " + this);    // monitor
     }
 
     @Override
