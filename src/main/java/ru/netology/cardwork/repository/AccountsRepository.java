@@ -9,13 +9,13 @@ public interface AccountsRepository {
 
     /**
      * Executes a given transfer operation: subtracts needed amount from A account and adds it up to B account.
-     * @param transferToCommit a description of the operation to perform containig
+     * @param transferToCommit a description of the operation to perform containing
      *                         all required data of sender's card,
-     *                         a number of recepient's card and
+     *                         a number of recipient's card and
      *                         a representation of the sum
-     *                              including fund's amount and it's currency.
+     *                              including fund's amount and its currency.
      * @throws CardDataNotValidException    if sender's card's number not found
-     *                                      or any of it's miscellangelous data doesn't match to the entity in the database.
+     *                                      or any of its miscellaneous data doesn't match to the entity in the database.
      * @throws TargetCardNotFoundException  if recipient's card's number not found in the database.
      * @throws FundsInsufficientException   if the requested sum to transfer in given currency exceeds the rest at the sender's account.
      */
