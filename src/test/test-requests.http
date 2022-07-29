@@ -1,0 +1,40 @@
+### a correct request
+POST http://localhost:5500/transfer/transfer
+Content-Type: application/json
+
+{
+  "cardFromNumber": "1234567812345678",
+  "cardFromValidTill": "03/25",
+  "cardFromCVV": "125",
+  "cardToNumber": "8765432187654321",
+  "amount": {
+    "value": 100,
+    "currency": "RUB"
+  }
+}
+
+### an incorrect expired request
+POST http://localhost:5500/transfer/transfer
+Content-Type: application/json
+
+{
+  "cardFromNumber": "1234567812345678",
+  "cardFromValidTill": "06/19",
+  "cardFromCVV": "125",
+  "cardToNumber": "8765432187654321",
+  "amount": {
+    "value": 100,
+    "currency": "RUB"
+  }
+}
+
+### totally wrong request
+POST http://localhost:5500/transfer/transfer
+Content-Type: application/json
+
+{
+  "value": "1234567812345678"
+}
+
+
+###

@@ -24,14 +24,12 @@ public class Card {
     private String cardNumber;
 
     @NotBlank
-    @DateTimeFormat(pattern = "MM/yy")  // TODO: supply with concrete date check
+    @DateTimeFormat(pattern = "MM/yy")
     @Future
-    @EqualsAndHashCode.Exclude
     private Date ValidTill;
 
     @NotBlank
     @Size(min = 3)
-    @EqualsAndHashCode.Exclude
     private String cardCVV;
 
     /**
