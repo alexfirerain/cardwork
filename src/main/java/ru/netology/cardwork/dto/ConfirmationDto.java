@@ -15,9 +15,9 @@ public class ConfirmationDto {
     @NotBlank
     private final String VerificationCode;
 
-    public ConfirmationDto(@NotBlank String OperationId, @NotBlank String VerificationCode) {
-        this.OperationId = OperationId;
-        this.VerificationCode = VerificationCode;
+    public ConfirmationDto(String operationId, String code) {
+        this.OperationId = operationId;
+        this.VerificationCode = code;
         log.debug("a confirmation object built: {}", this);
     }
 

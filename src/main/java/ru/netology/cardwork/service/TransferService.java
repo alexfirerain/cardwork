@@ -23,7 +23,9 @@ public class TransferService {
     final private VerificationCodeProvider verificationCodeProvider;
     final private AccountsRepository accountsRepository;
 
-    public TransferService(OperationIdProvider operationIdProvider, VerificationCodeProvider verificationCodeProvider, AccountsRepository accountsRepository) {
+    public TransferService(OperationIdProvider operationIdProvider,
+                           VerificationCodeProvider verificationCodeProvider,
+                           AccountsRepository accountsRepository) {
         this.operationIdProvider = operationIdProvider;
         this.verificationCodeProvider = verificationCodeProvider;
         this.accountsRepository = accountsRepository;
@@ -44,13 +46,22 @@ public class TransferService {
     }
 
     public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {
+
+        log.debug("TS received a confirmation: {}", confirmation);
         String operationId = confirmation.getOperationId();
         String codeReceived = confirmation.getVerificationCode();
+
+        if (!transfersInService.containsKey(operationId)) {
+            throw new RuntimeException("Operation not in service");
+        }
         if (!verificationCodeProvider.accepts(codeReceived)) {
             throw new CodeNotFitsException("The received code doesn't match");
         }
-        Transfer dealToCommit = transfersInService.get(operationId);
+
+        Transfer dealToCommit = transfersInService.remove(operationId);
         accountsRepository.commitTransfer(dealToCommit);
+
+        log.info("Transfer commited: {}", dealToCommit);
         return new OperationIdDto(operationId);
     }
 }

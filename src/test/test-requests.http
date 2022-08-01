@@ -37,4 +37,11 @@ Content-Type: application/json
 }
 
 
-###
+### confirmation request
+POST http://localhost:5500/transfer/confirmOperation
+Content-Type: application/json
+
+{
+  "operationId": "0",
+  "code": "0000"
+}
