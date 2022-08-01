@@ -1,5 +1,8 @@
 package ru.netology.cardwork.controller;
 
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,7 @@ import javax.validation.Valid;
 /**
  * A REST-controller to receive and handle requests on money transfer.
  */
+@Slf4j
 @RestController
 @RequestMapping("/transfer")
 public class TransferController {
@@ -25,14 +29,13 @@ public class TransferController {
 
     public TransferController(TransferService transferService) {
         this.transferService = transferService;
-
-        System.out.println("TC initialized");
+        log.debug("A Transfer Controller initialized");
     }
 
     @PostMapping("/transfer")
     public OperationIdDto acceptTransferRequest(@RequestBody @Valid Transfer request) {
 
-        System.out.println("request: " + request);
+        log.info("a request {} received", request);
 
         return transferService.bidTransferRequest(request);
     }
@@ -40,7 +43,7 @@ public class TransferController {
     @PostMapping("/confirmOperation")
     public OperationIdDto confirmTransferRequest(@RequestBody @Valid ConfirmationDto confirmation) {
 
-        System.out.println("confirmation: " + confirmation);
+        log.info("a confirmation {} received ", confirmation);
 
         return transferService.commitTransferRequest(confirmation);
     }

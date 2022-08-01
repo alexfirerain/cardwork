@@ -2,6 +2,7 @@ package ru.netology.cardwork.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import ru.netology.cardwork.model.Card;
 import ru.netology.cardwork.model.TransferAmount;
 
@@ -19,6 +20,7 @@ import java.util.Date;
  * representing the matter to be transferred.
  */
 @Getter
+@Slf4j
 public class Transfer {
     @Valid
     private final Card cardFrom;
@@ -39,7 +41,7 @@ public class Transfer {
         this.cardTo = cardToNumber;
         this.transferAmount = amount;
 
-        System.out.println("Transfer constructed: " + this);           // monitor
+        log.debug("Transfer constructed: {}", this);
     }
 
     @Override
