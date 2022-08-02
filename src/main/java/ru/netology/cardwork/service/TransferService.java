@@ -17,10 +17,24 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 public class TransferService {
 
+    /**
+     * The list of transfer requests waiting to be confirmed.
+     */
     final private Map<String, Transfer> transfersInService;
 
+    /**
+     * The source of operational IDs to assign to the transfers in service.
+     */
     final private OperationIdProvider operationIdProvider;
+
+    /**
+     * The source of verification codes to verify the transfers in service.
+     */
     final private VerificationCodeProvider verificationCodeProvider;
+
+    /**
+     * A repository this service operates with.
+     */
     final private AccountsRepository accountsRepository;
 
     public TransferService(OperationIdProvider operationIdProvider,
@@ -61,7 +75,7 @@ public class TransferService {
         Transfer dealToCommit = transfersInService.remove(operationId);
         accountsRepository.commitTransfer(dealToCommit);
 
-        log.info("Transfer commited: {}", dealToCommit);
+        log.info("Transfer committed: {}", dealToCommit);
         return new OperationIdDto(operationId);
     }
 }

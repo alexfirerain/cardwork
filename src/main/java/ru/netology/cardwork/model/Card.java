@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.*;
 import java.text.ParseException;
@@ -18,17 +17,16 @@ import java.util.Date;
 @Slf4j
 @Validated
 public class Card {
-    @NotBlank
-    @Pattern(regexp = "\\d{16,}")
+    @NotBlank(message = "номер карты не должен быть пустым")
+    @Pattern(regexp = "\\d{16,}", message = "номер карты по меньшей мере 16 цифр")
     private String cardNumber;
 
-    @NotNull
-    @DateTimeFormat(pattern = "MM/yy")
-    @Future
-    private Date ValidTill;
+    @NotNull(message = "должен быть указан срок действия")
+    @Future(message = "карта просрочена")
+    private Date validTill;
 
-    @NotBlank
-    @Size(min = 3)
+    @NotBlank(message = "CVV не должно быть пустым")
+    @Size(min = 3, message = "в CVV не меньше трёх символов")
     private String cardCVV;
 
     /**
@@ -41,7 +39,7 @@ public class Card {
     public Card(String cardNumber, String validTill, String cardCVV) throws ParseException {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
         this.cardNumber = cardNumber;
-        ValidTill = dateFormatter.parse(validTill);
+        this.validTill = dateFormatter.parse(validTill);
         this.cardCVV = cardCVV;
 
         log.debug("Card constructed: {}", this);
@@ -49,6 +47,6 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Карта №" + cardNumber + " (действительна по " + ValidTill + ", CVV " + cardCVV + ")";
+        return "Карта №" + cardNumber + " (действительна по " + validTill + ", CVV " + cardCVV + ")";
     }
 }
