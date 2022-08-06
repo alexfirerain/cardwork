@@ -6,9 +6,9 @@ import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
 import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.CodeNotFitsException;
-import ru.netology.cardwork.providers.VerificationCodeProvider;
+import ru.netology.cardwork.providers.verification.VerificationProvider;
 import ru.netology.cardwork.repository.AccountsRepository;
-import ru.netology.cardwork.providers.OperationIdProvider;
+import ru.netology.cardwork.providers.id.OperationIdProvider;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,7 +30,7 @@ public class TransferService {
     /**
      * The source of verification codes to verify the transfers in service.
      */
-    final private VerificationCodeProvider verificationCodeProvider;
+    final private VerificationProvider verificationProvider;
 
     /**
      * A repository this service operates with.
@@ -38,10 +38,10 @@ public class TransferService {
     final private AccountsRepository accountsRepository;
 
     public TransferService(OperationIdProvider operationIdProvider,
-                           VerificationCodeProvider verificationCodeProvider,
+                           VerificationProvider verificationProvider,
                            AccountsRepository accountsRepository) {
         this.operationIdProvider = operationIdProvider;
-        this.verificationCodeProvider = verificationCodeProvider;
+        this.verificationProvider = verificationProvider;
         this.accountsRepository = accountsRepository;
         transfersInService = new ConcurrentHashMap<>();
 
@@ -68,7 +68,7 @@ public class TransferService {
         if (!transfersInService.containsKey(operationId)) {
             throw new RuntimeException("Operation not in service");
         }
-        if (!verificationCodeProvider.accepts(codeReceived)) {
+        if (!verificationProvider.accepts(codeReceived)) {
             throw new CodeNotFitsException("The received code doesn't match");
         }
 

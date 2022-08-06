@@ -1,9 +1,9 @@
-package ru.netology.cardwork.providers;
+package ru.netology.cardwork.providers.verification;
 
 /**
  * Provides a verification code for a transfer to be approved.
  */
-public interface VerificationCodeProvider {
+public interface VerificationProvider {
     /**
      * Supplies a verification code for current operation
      * @return  a proper code.

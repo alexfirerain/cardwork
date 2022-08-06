@@ -1,17 +1,14 @@
 package ru.netology.cardwork.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.netology.cardwork.model.Card;
+import ru.netology.cardwork.model.CardIdentity;
 import ru.netology.cardwork.model.TransferAmount;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Date;
 
 /**
  * An object being received as a request on a transfer deal.
@@ -23,7 +20,7 @@ import java.util.Date;
 @Slf4j
 public class Transfer {
     @Valid
-    private final Card cardFrom;
+    private final CardIdentity cardFrom;
     @NotBlank
     @Pattern(regexp = "\\d{16,}")
     private final String cardTo;
@@ -35,7 +32,7 @@ public class Transfer {
                     String cardFromCVV,
                     String cardToNumber,
                     TransferAmount amount) throws ParseException {
-        this.cardFrom = new Card(cardFromNumber,
+        this.cardFrom = new CardIdentity(cardFromNumber,
                                 cardFromValidTill,
                                 cardFromCVV);
         this.cardTo = cardToNumber;

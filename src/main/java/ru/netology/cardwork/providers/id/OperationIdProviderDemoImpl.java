@@ -1,4 +1,4 @@
-package ru.netology.cardwork.providers;
+package ru.netology.cardwork.providers.id;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 @Component
 @Slf4j
-public class PlainOperationIdProvider implements OperationIdProvider {
+public class OperationIdProviderDemoImpl implements OperationIdProvider {
 
     /**
      * A counter to serve a next number as an ID.

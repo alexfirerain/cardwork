@@ -1,11 +1,11 @@
-package ru.netology.cardwork.providers;
+package ru.netology.cardwork.providers.verification;
 
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotBlank;
 
 @Component
-public class PlainVerificationCodeProvider implements VerificationCodeProvider{
+public class VerificationProviderDemoImpl implements VerificationProvider {
 
     @NotBlank(message = "код подтверждения не может быть пуст")
     public static final String CONSTANT = "0000";

@@ -1,4 +1,4 @@
-package ru.netology.cardwork.providers;
+package ru.netology.cardwork.providers.id;
 
 import org.springframework.stereotype.Component;
 
