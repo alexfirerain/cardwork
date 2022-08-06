@@ -4,6 +4,7 @@ import org.springframework.stereotype.Repository;
 import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.CardDataNotValidException;
 import ru.netology.cardwork.exception.CardNotFoundException;
+import ru.netology.cardwork.exception.TransferNotPossibleException;
 import ru.netology.cardwork.model.CardEntity;
 import ru.netology.cardwork.model.CardIdentity;
 
@@ -104,12 +105,29 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
      * @throws CardDataNotValidException    if any of card data is not the same as in one in the repository.
      */
     @Override
-    public int howManyFundsHas(CardIdentity card, String currency) throws CardNotFoundException, CardDataNotValidException {
+    public int howManyFundsHas(CardIdentity card,
+                               String currency) throws CardNotFoundException,
+                                                       CardDataNotValidException,
+                                                       TransferNotPossibleException {
         if (!isValidCardData(card))
             throw new CardDataNotValidException("Данные карты №" + card.getCardNumber() + " не соответствуют. К сожалению.");
+
         CardEntity requestedCard = getCardByIdentity(card);
         Map<String, Integer> currencyAccount = cards.get(requestedCard);
         Integer fund = currencyAccount.get(currency);
-        return fund == null ? 0 : fund;
+        if (fund == null) {
+            throw new TransferNotPossibleException("На карте №" + card.getCardNumber() + " отсутствует " + currency + "-счёт.");
+        }
+        return fund;
     }
+
+    @Override
+    public String getContactData(CardIdentity card) {
+        CardEntity entity = getCardByIdentity(card);
+        if (entity == null)
+            throw new CardNotFoundException("Карта №" + card.getCardNumber() + " отсутствует.");
+        return entity.getContactData();
+    }
+
+
 }

@@ -47,4 +47,6 @@ public interface AccountsRepository {
      * @throws CardDataNotValidException    if any of fields of given card doesn't match the entity in the repository.
      */
     int howManyFundsHas(CardIdentity card, String currency) throws CardNotFoundException, CardDataNotValidException;
+
+    String getContactData(CardIdentity card);
 }

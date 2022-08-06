@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
 import ru.netology.cardwork.dto.Transfer;
-import ru.netology.cardwork.exception.CodeNotFitsException;
+import ru.netology.cardwork.exception.VerificationFailureException;
 import ru.netology.cardwork.providers.verification.VerificationProvider;
 import ru.netology.cardwork.repository.AccountsRepository;
 import ru.netology.cardwork.providers.id.OperationIdProvider;
@@ -55,6 +55,10 @@ public class TransferService {
 
         String operationId = operationIdProvider.serveAnOperationId();
         transfersInService.put(operationId, request);
+        verificationProvider
+                .provideAVerificationCodeFor(request,
+                        accountsRepository.getContactData(request.getCardFrom())
+                );
 
         return new OperationIdDto(operationId);
     }
@@ -66,13 +70,16 @@ public class TransferService {
         String codeReceived = confirmation.getVerificationCode();
 
         if (!transfersInService.containsKey(operationId)) {
-            throw new RuntimeException("Operation not in service");
-        }
-        if (!verificationProvider.accepts(codeReceived)) {
-            throw new CodeNotFitsException("The received code doesn't match");
+            throw new RuntimeException("Нет операции для подтверждения.");
         }
 
         Transfer dealToCommit = transfersInService.remove(operationId);
+
+        if (!verificationProvider.accepts(dealToCommit, codeReceived)) {
+            transfersInService.put(operationId, dealToCommit);
+            throw new VerificationFailureException("Код подтверждения не соответствует.");
+        }
+
         accountsRepository.commitTransfer(dealToCommit);
 
         log.info("Transfer committed: {}", dealToCommit);

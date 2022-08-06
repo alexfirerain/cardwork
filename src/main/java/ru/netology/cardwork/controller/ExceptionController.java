@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import ru.netology.cardwork.dto.ErrorResponseDto;
-import ru.netology.cardwork.exception.CodeNotFitsException;
+import ru.netology.cardwork.exception.VerificationFailureException;
 import ru.netology.cardwork.exception.FundsInsufficientException;
 import ru.netology.cardwork.exception.CardNotFoundException;
 import ru.netology.cardwork.exception.TransferNotPossibleException;
@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ExceptionController {
     private static final AtomicInteger idCount = new AtomicInteger();
 
-    @ExceptionHandler({CodeNotFitsException.class,
+    @ExceptionHandler({VerificationFailureException.class,
                         ConfigDataNotFoundException.class,
                         FundsInsufficientException.class,
                         CardNotFoundException.class})
