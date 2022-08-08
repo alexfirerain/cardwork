@@ -11,18 +11,18 @@ import javax.validation.constraints.NotBlank;
 @Validated
 public class ConfirmationDto {
     @NotBlank
-    private final String OperationId;
+    private final String operationId;
     @NotBlank
-    private final String VerificationCode;
+    private final String code;
 
     public ConfirmationDto(String operationId, String code) {
-        this.OperationId = operationId;
-        this.VerificationCode = code;
+        this.operationId = operationId;
+        this.code = code;
         log.debug("a confirmation object built: {}", this);
     }
 
     @Override
     public String toString() {
-        return '{' + OperationId + ':' + VerificationCode + '}';
+        return '{' + operationId + ':' + code + '}';
     }
 }

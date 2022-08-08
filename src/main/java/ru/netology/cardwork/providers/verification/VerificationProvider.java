@@ -14,7 +14,7 @@ public interface VerificationProvider {
      * @param confirmationAddress an address the user is to be contacted on.
      * @throws VerificationFailureException if contacting user is impossible for some reason.
      */
-    void provideAVerificationCodeFor(Transfer request, String confirmationAddress) throws VerificationFailureException;
+    void performVerificationProcedure(Transfer request, String confirmationAddress) throws VerificationFailureException;
 
     /**
      * Informs whether the code received matches a proper code the provider provided for that transfer.
@@ -23,6 +23,6 @@ public interface VerificationProvider {
      * @param codeReceived a given code to be compared.
      * @return {@code true} if given code is true, {@code false} otherwise.
      */
-    boolean accepts(Transfer dealToCommit, String codeReceived);
+    boolean validate(Transfer dealToCommit, String codeReceived);
 
 }

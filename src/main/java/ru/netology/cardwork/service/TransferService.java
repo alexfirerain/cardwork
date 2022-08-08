@@ -56,7 +56,7 @@ public class TransferService {
         String operationId = operationIdProvider.serveAnOperationId();
         transfersInService.put(operationId, request);
         verificationProvider
-                .provideAVerificationCodeFor(request,
+                .performVerificationProcedure(request,
                         accountsRepository.getContactData(request.getCardFrom())
                 );
 
@@ -64,10 +64,10 @@ public class TransferService {
     }
 
     public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {
-
         log.debug("TS received a confirmation: {}", confirmation);
+
         String operationId = confirmation.getOperationId();
-        String codeReceived = confirmation.getVerificationCode();
+        String codeReceived = confirmation.getCode();
 
         if (!transfersInService.containsKey(operationId)) {
             throw new RuntimeException("Нет операции для подтверждения.");
@@ -75,7 +75,7 @@ public class TransferService {
 
         Transfer dealToCommit = transfersInService.remove(operationId);
 
-        if (!verificationProvider.accepts(dealToCommit, codeReceived)) {
+        if (!verificationProvider.validate(dealToCommit, codeReceived)) {
             transfersInService.put(operationId, dealToCommit);
             throw new VerificationFailureException("Код подтверждения не соответствует.");
         }

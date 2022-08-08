@@ -80,7 +80,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
 
     @Override
     public boolean containsCardNumber(String number) {
-        for(CardEntity card : cards.keySet())
+        for(CardEntity card : cardsData())
             if (card.getCardNumber().equals(number))
                 return true;
 
