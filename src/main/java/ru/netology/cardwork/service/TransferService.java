@@ -18,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TransferService {
 
     /**
-     * The list of transfer requests waiting to be confirmed.
+     * The list of transaction requests waiting to be confirmed.
      */
     final private Map<String, Transfer> transfersInService;
 

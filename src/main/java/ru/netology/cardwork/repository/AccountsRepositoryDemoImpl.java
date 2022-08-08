@@ -5,8 +5,8 @@ import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.CardDataNotValidException;
 import ru.netology.cardwork.exception.CardNotFoundException;
 import ru.netology.cardwork.exception.TransferNotPossibleException;
-import ru.netology.cardwork.model.CardEntity;
-import ru.netology.cardwork.model.CardIdentity;
+import ru.netology.cardwork.model.Account;
+import ru.netology.cardwork.model.Card;
 
 import java.util.Map;
 import java.util.Set;
@@ -18,59 +18,63 @@ import java.util.concurrent.ConcurrentHashMap;
 @Repository
 public class AccountsRepositoryDemoImpl implements AccountsRepository {
 
+    private final Map<String, Account> accounts = new ConcurrentHashMap<>();
     /**
      * The implementation of banking structure holding a CardEntity object as a key
      * and a map of multiaccaunt as a value. The multiaccaunt holds currency naming
      * as a key and value in Integer as a value. Using integer values is as strange
      * applicable for financials as required in this task.
      */
-    private final Map<CardEntity, Map<String, Integer>> cards = new ConcurrentHashMap<>();
+    private final Map<Account, Map<String, Integer>> cards = new ConcurrentHashMap<>();
 
     /**
      * Returns all known in this repository card entities as a set.
      * @return a set of all CardEntities in the 'cards' map.
      */
-    private Set<CardEntity> cardsData() {
-        return cards.keySet();
+    private Set<Account> allAccounts() {
+        return (Set<Account>) accounts.values();
+    }
+
+    private Set<String> allNumbers() {
+        return accounts.keySet();
     }
 
     /**
-     * Puts a CardIdentity object to the repository as a new active CardEntity, assuming contactData
+     * Puts a Card object to the repository as a new active Account, assuming contactData
      * to be an empty string. Assigns to it a new empty account in "RUB" currency.
      * @param cardAdding a card to be inserted into the base.
      */
-    public void addDefaultEntity(CardIdentity cardAdding) {
-        CardEntity newRecord = new CardEntity(cardAdding, "", true);
-        Map<String, Integer> cardsFunds = new ConcurrentHashMap<>();
-        cardsFunds.put("RUB", 0);
-        cards.put(newRecord, cardsFunds);
+    public void addDefaultEntity(Card cardAdding) {
+        Account newRecord = new Account(cardAdding, "", true, new ConcurrentHashMap<>());
+        newRecord.addAccount("RUB", 0);
+        accounts.put(cardAdding.getCardNumber(), newRecord);
     }
 
     /**
-     * Retrieves from the repository a CardIdentity object which has given number.
+     * Retrieves from the repository a Card object which has given number.
      * @param number a card number in question.
-     * @return a CardIdentity object with number in question; {@code null} if such a card is absent.
+     * @return a Card object with number in question; {@code null} if such a card is absent.
      */
-    private CardIdentity getCardByNumber(String number) {
-        for(CardEntity card : cardsData())
-            if (card.getCardNumber().equals(number))
-                return card.getCardData();
-
-        return null;
+    private Card getCardByNumber(String number) {
+        return accounts.get(number).getCardEntity();
     }
 
     /**
-     * Retrieves from the repository a CardEntity object
-     * corresponding to the given CardIdentity.
+     * Retrieves from the repository an Account object
+     * corresponding to the given Card.
      * @param card card identities in question.
-     * @return a fully qualified CardEntity entity, {@code null} if there's no object with such identities in da base.
+     * @return a fully qualified Account entity, {@code null} if there's no object with such identities in da base.
      */
-    private CardEntity getCardByIdentity(CardIdentity card) {
-        for(CardEntity cardEntity : cardsData())
-            if (cardEntity.getCardData().equals(card))
-                return cardEntity;
+    private Account getAccountByCard(Card card) {
+        String cardNumber = card.getCardNumber();
 
-        return null;
+        if (!containsCardNumber(cardNumber))
+            throw new CardNotFoundException("не найдено карты с  №" + cardNumber);
+
+        if (!isValidCardData(card))
+            throw new CardDataNotValidException("переданные данные карты №" + cardNumber + " не соответствуют");
+
+        return accounts.get(cardNumber);
     }
 
     @Override
@@ -80,20 +84,16 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
 
     @Override
     public boolean containsCardNumber(String number) {
-        for(CardEntity card : cardsData())
-            if (card.getCardNumber().equals(number))
-                return true;
-
-        return false;
+        return allNumbers().contains(number);
     }
 
     @Override
-    public boolean isValidCardData(CardIdentity cardIdentity) throws CardNotFoundException {
-        String cardRequestedNumber = cardIdentity.getCardNumber();
-        CardIdentity cardInQuestion = getCardByNumber(cardRequestedNumber);
+    public boolean isValidCardData(Card card) throws CardNotFoundException {
+        String cardRequestedNumber = card.getCardNumber();
+        Card cardInQuestion = getCardByNumber(cardRequestedNumber);
         if (cardInQuestion == null)
                 throw new CardNotFoundException("Сведений о карте №" + cardRequestedNumber + " нет.");
-        return cardInQuestion.equals(cardIdentity);
+        return cardInQuestion.equals(card);
     }
 
     /**
@@ -105,29 +105,35 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
      * @throws CardDataNotValidException    if any of card data is not the same as in one in the repository.
      */
     @Override
-    public int howManyFundsHas(CardIdentity card,
+    public int howManyFundsHas(Card card,
                                String currency) throws CardNotFoundException,
                                                        CardDataNotValidException,
                                                        TransferNotPossibleException {
-        if (!isValidCardData(card))
-            throw new CardDataNotValidException("Данные карты №" + card.getCardNumber() + " не соответствуют. К сожалению.");
+        validateCard(card);
 
-        CardEntity requestedCard = getCardByIdentity(card);
-        Map<String, Integer> currencyAccount = cards.get(requestedCard);
-        Integer fund = currencyAccount.get(currency);
-        if (fund == null) {
+        Account account = getAccountByCard(card);
+
+        if (!account.hasCurrencyAccount(currency))
             throw new TransferNotPossibleException("На карте №" + card.getCardNumber() + " отсутствует " + currency + "-счёт.");
-        }
-        return fund;
+
+        return account.fundsOnAccount(currency);
     }
 
     @Override
-    public String getContactData(CardIdentity card) {
-        CardEntity entity = getCardByIdentity(card);
-        if (entity == null)
-            throw new CardNotFoundException("Карта №" + card.getCardNumber() + " отсутствует.");
-        return entity.getContactData();
+    public String getContactData(Card card) {
+        validateCard(card);
+        return getAccountByCard(card).getContactData();
     }
 
+    private void validateCard(Card card) throws CardNotFoundException, CardDataNotValidException {
+        String cardNumber = card.getCardNumber();
+
+        if (!containsCardNumber(cardNumber))
+            throw new CardNotFoundException("не найдено карты с  №" + cardNumber);
+
+        if (!isValidCardData(card))
+            throw new CardDataNotValidException("Данные карты №" + cardNumber + " не соответствуют. К сожалению.");
+
+    }
 
 }

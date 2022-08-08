@@ -16,7 +16,7 @@ import java.util.Date;
 @NoArgsConstructor
 @Slf4j
 @Validated
-public class CardIdentity {
+public class Card {
     @NotBlank(message = "номер карты не должен быть пустым")
     @Pattern(regexp = "\\d{16,}", message = "номер карты по меньшей мере 16 цифр")
     private String cardNumber;
@@ -36,9 +36,9 @@ public class CardIdentity {
      * @param cardCVV       a miscellaneous card's CVV.
      * @throws ParseException   if extraction of date from string not successful.
      */
-    public CardIdentity(String cardNumber,
-                        String validTill,
-                        String cardCVV) throws ParseException {
+    public Card(String cardNumber,
+                String validTill,
+                String cardCVV) throws ParseException {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
         this.cardNumber = cardNumber;
         this.validTill = dateFormatter.parse(validTill);

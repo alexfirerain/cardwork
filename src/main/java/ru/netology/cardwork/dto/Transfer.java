@@ -2,7 +2,7 @@ package ru.netology.cardwork.dto;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.netology.cardwork.model.CardIdentity;
+import ru.netology.cardwork.model.Card;
 import ru.netology.cardwork.model.TransferAmount;
 
 import javax.validation.Valid;
@@ -20,7 +20,7 @@ import java.text.ParseException;
 @Slf4j
 public class Transfer {
     @Valid
-    private final CardIdentity cardFrom;
+    private final Card cardFrom;
     @NotBlank
     @Pattern(regexp = "\\d{16,}")
     private final String cardTo;
@@ -32,7 +32,7 @@ public class Transfer {
                     String cardFromCVV,
                     String cardToNumber,
                     TransferAmount amount) throws ParseException {
-        this.cardFrom = new CardIdentity(cardFromNumber,
+        this.cardFrom = new Card(cardFromNumber,
                                 cardFromValidTill,
                                 cardFromCVV);
         this.cardTo = cardToNumber;

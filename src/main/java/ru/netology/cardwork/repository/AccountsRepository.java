@@ -4,7 +4,7 @@ import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.CardDataNotValidException;
 import ru.netology.cardwork.exception.CardNotFoundException;
 import ru.netology.cardwork.exception.TransferNotPossibleException;
-import ru.netology.cardwork.model.CardIdentity;
+import ru.netology.cardwork.model.Card;
 
 public interface AccountsRepository {
 
@@ -32,11 +32,12 @@ public interface AccountsRepository {
 
     /**
      * Tells whether card's data correspond to those in the repository.
-     * @param cardIdentity a card's data to be verified.
-     * @return {@code true} if all fields of the card in question match the entity in the repository.
+     * @param card a card's data to be verified.
+     * @return {@code true} if all fields of the card in question match the entity in the repository,
+     * {@code false} otherwise.
      * @throws CardNotFoundException if a card with such a number is absent from the repository at all.
      */
-    boolean isValidCardData(CardIdentity cardIdentity) throws CardNotFoundException;
+    boolean isValidCardData(Card card) throws CardNotFoundException;
 
     /**
      * Tells how many funds is present at the card's account in given currency.
@@ -46,7 +47,7 @@ public interface AccountsRepository {
      * @throws CardNotFoundException    if there's no card with such a number in the repository.
      * @throws CardDataNotValidException    if any of fields of given card doesn't match the entity in the repository.
      */
-    int howManyFundsHas(CardIdentity card, String currency) throws CardNotFoundException, CardDataNotValidException;
+    int howManyFundsHas(Card card, String currency) throws CardNotFoundException, CardDataNotValidException;
 
-    String getContactData(CardIdentity card);
+    String getContactData(Card card);
 }
