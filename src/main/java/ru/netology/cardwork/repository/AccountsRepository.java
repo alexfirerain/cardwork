@@ -31,6 +31,18 @@ public interface AccountsRepository {
     boolean containsCardNumber(String number);
 
     /**
+     * Tells whether a card with such a number is ready for a transaction in given currency.
+     * This means that there's a card with such number in the repository,
+     * it is active and do have an account in currency in question.
+     * None misc card data are checked.
+     * @param cardNumber a number of card in question.
+     * @param currency   a name of currency in question.
+     * @return {@code true} if the number is present and corresponding card is active
+     * and has an appropriate account. {@code false} otherwise.
+     */
+    boolean isReadyForTransfer(String cardNumber, String currency);
+
+    /**
      * Tells whether card's data correspond to those in the repository.
      * @param card a card's data to be verified.
      * @return {@code true} if all fields of the card in question match the entity in the repository,
@@ -49,5 +61,17 @@ public interface AccountsRepository {
      */
     int howManyFundsHas(Card card, String currency) throws CardNotFoundException, CardDataNotValidException;
 
+    /**
+     * Reports contact data to get in touch with the card's owner.
+     * @param card a card whose owner's address is queried.
+     * @return a string containing owner's contact data.
+     */
     String getContactData(Card card);
+
+    /**
+     * Checks whether offered properties in the transaction request meet the criteria.
+     * @param request a Transfer object to be checked.
+     */
+    void checkTransferPossibility(Transfer request);
+
 }

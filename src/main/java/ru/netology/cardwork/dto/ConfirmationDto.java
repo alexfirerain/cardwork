@@ -6,6 +6,9 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * A transient object for accepting a verification code from the front-side.
+ */
 @Getter
 @Slf4j
 @Validated

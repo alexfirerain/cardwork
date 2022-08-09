@@ -13,6 +13,9 @@ import ru.netology.cardwork.providers.id.OperationIdProvider;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * A service handling transfer requests. It accepts a request first and, on confirmation, sends it for release next.
+ */
 @Service
 @Slf4j
 public class TransferService {
@@ -50,9 +53,8 @@ public class TransferService {
 
 
     public OperationIdDto bidTransferRequest(Transfer request) {
-
         log.debug("TS received a request: {}", request);
-
+        accountsRepository.checkTransferPossibility(request);
         String operationId = operationIdProvider.serveAnOperationId();
         transfersInService.put(operationId, request);
         verificationProvider
@@ -65,9 +67,7 @@ public class TransferService {
 
     public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {
         log.debug("TS received a confirmation: {}", confirmation);
-
         String operationId = confirmation.getOperationId();
-        String codeReceived = confirmation.getCode();
 
         if (!transfersInService.containsKey(operationId)) {
             throw new RuntimeException("Нет операции для подтверждения.");
@@ -75,7 +75,7 @@ public class TransferService {
 
         Transfer dealToCommit = transfersInService.remove(operationId);
 
-        if (!verificationProvider.validate(dealToCommit, codeReceived)) {
+        if (!verificationProvider.validate(dealToCommit, confirmation.getCode())) {
             transfersInService.put(operationId, dealToCommit);
             throw new VerificationFailureException("Код подтверждения не соответствует.");
         }

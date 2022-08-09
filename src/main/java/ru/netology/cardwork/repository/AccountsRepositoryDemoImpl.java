@@ -9,7 +9,6 @@ import ru.netology.cardwork.model.Account;
 import ru.netology.cardwork.model.Card;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,37 +16,49 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository
 public class AccountsRepositoryDemoImpl implements AccountsRepository {
-
+    /**
+     * The implementation of banking structure holding a card number string as a key
+     * and an Account object as a value.
+     */
     private final Map<String, Account> accounts = new ConcurrentHashMap<>();
-    /**
-     * The implementation of banking structure holding a CardEntity object as a key
-     * and a map of multiaccaunt as a value. The multiaccaunt holds currency naming
-     * as a key and value in Integer as a value. Using integer values is as strange
-     * applicable for financials as required in this task.
-     */
-    private final Map<Account, Map<String, Integer>> cards = new ConcurrentHashMap<>();
 
-    /**
-     * Returns all known in this repository card entities as a set.
-     * @return a set of all CardEntities in the 'cards' map.
-     */
-    private Set<Account> allAccounts() {
-        return (Set<Account>) accounts.values();
-    }
 
-    private Set<String> allNumbers() {
-        return accounts.keySet();
-    }
+/*
+    Methods managing Entities.
+ */
 
     /**
      * Puts a Card object to the repository as a new active Account, assuming contactData
      * to be an empty string. Assigns to it a new empty account in "RUB" currency.
      * @param cardAdding a card to be inserted into the base.
      */
-    public void addDefaultEntity(Card cardAdding) {
-        Account newRecord = new Account(cardAdding, "", true, new ConcurrentHashMap<>());
+    public void addDefaultAccount(Card cardAdding) {
+        Account newRecord = new Account(cardAdding);
         newRecord.addAccount("RUB", 0);
         accounts.put(cardAdding.getCardNumber(), newRecord);
+    }
+
+
+    @Override
+    public boolean containsCardNumber(String number) {
+        return accounts.containsKey(number);
+    }
+
+    @Override
+    public boolean isReadyForTransfer(String cardNumber, String currency) {
+        Account account = accounts.get(cardNumber);
+            return account != null
+                    && account.isActive()
+                    && account.hasCurrencyAccount(currency);
+    }
+
+    @Override
+    public boolean isValidCardData(Card card) throws CardNotFoundException {
+        String cardRequestedNumber = card.getCardNumber();
+        Card cardInQuestion = getCardByNumber(cardRequestedNumber);
+        if (cardInQuestion == null)
+            throw new CardNotFoundException("Сведений о карте №" + cardRequestedNumber + " нет.");
+        return cardInQuestion.equals(card);
     }
 
     /**
@@ -66,34 +77,8 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
      * @return a fully qualified Account entity, {@code null} if there's no object with such identities in da base.
      */
     private Account getAccountByCard(Card card) {
-        String cardNumber = card.getCardNumber();
-
-        if (!containsCardNumber(cardNumber))
-            throw new CardNotFoundException("не найдено карты с  №" + cardNumber);
-
-        if (!isValidCardData(card))
-            throw new CardDataNotValidException("переданные данные карты №" + cardNumber + " не соответствуют");
-
-        return accounts.get(cardNumber);
-    }
-
-    @Override
-    public void commitTransfer(Transfer transferToCommit) {
-
-    }
-
-    @Override
-    public boolean containsCardNumber(String number) {
-        return allNumbers().contains(number);
-    }
-
-    @Override
-    public boolean isValidCardData(Card card) throws CardNotFoundException {
-        String cardRequestedNumber = card.getCardNumber();
-        Card cardInQuestion = getCardByNumber(cardRequestedNumber);
-        if (cardInQuestion == null)
-                throw new CardNotFoundException("Сведений о карте №" + cardRequestedNumber + " нет.");
-        return cardInQuestion.equals(card);
+        validateCard(card);
+        return accounts.get(card.getCardNumber());
     }
 
     /**
@@ -120,9 +105,19 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
     }
 
     @Override
+    public void commitTransfer(Transfer transferToCommit) {
+
+    }
+
+    @Override
     public String getContactData(Card card) {
         validateCard(card);
         return getAccountByCard(card).getContactData();
+    }
+
+    @Override
+    public void checkTransferPossibility(Transfer request) {
+
     }
 
     private void validateCard(Card card) throws CardNotFoundException, CardDataNotValidException {

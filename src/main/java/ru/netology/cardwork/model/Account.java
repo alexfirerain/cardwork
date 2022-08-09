@@ -15,7 +15,16 @@ public class Account {
     private Card cardEntity;
     private String contactData;
     private boolean isActive;
+    /**
+     * The multiaccaunt holding currency naming as a key
+     * and value in Integer as a value.
+     * Using integer values is as strange applicable for financials as required in this task.
+     */
     private Map<String, Integer> currencyAccounts;
+
+    public Account(Card cardAdding) {
+        this(cardAdding,  "", true, new ConcurrentHashMap<>());
+    }
 
     public String getCardNumber() {
         return cardEntity.getCardNumber();
