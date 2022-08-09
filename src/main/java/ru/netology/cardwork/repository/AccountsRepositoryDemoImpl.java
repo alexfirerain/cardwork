@@ -1,9 +1,11 @@
 package ru.netology.cardwork.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.CardDataNotValidException;
 import ru.netology.cardwork.exception.CardNotFoundException;
+import ru.netology.cardwork.exception.FundsInsufficientException;
 import ru.netology.cardwork.exception.TransferNotPossibleException;
 import ru.netology.cardwork.model.Account;
 import ru.netology.cardwork.model.Card;
@@ -15,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * A mock implementation of financial repository capable of transfer operations.
  */
 @Repository
+@Slf4j
 public class AccountsRepositoryDemoImpl implements AccountsRepository {
     /**
      * The implementation of banking structure holding a card number string as a key
@@ -56,8 +59,10 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
     public boolean isValidCardData(Card card) throws CardNotFoundException {
         String cardRequestedNumber = card.getCardNumber();
         Card cardInQuestion = getCardByNumber(cardRequestedNumber);
-        if (cardInQuestion == null)
+        if (cardInQuestion == null) {
+            log.error("No card #{} found", cardRequestedNumber);
             throw new CardNotFoundException("Сведений о карте №" + cardRequestedNumber + " нет.");
+        }
         return cardInQuestion.equals(card);
     }
 
@@ -98,15 +103,41 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
 
         Account account = getAccountByCard(card);
 
-        if (!account.hasCurrencyAccount(currency))
-            throw new TransferNotPossibleException("На карте №" + card.getCardNumber() + " отсутствует " + currency + "-счёт.");
+        if (!account.hasCurrencyAccount(currency)) {
+            log.error("Attempt to access unexisting currency account at card#{}", card.getCardNumber());
+            throw new IllegalArgumentException("На карте №" + card.getCardNumber() + " отсутствует " + currency + "-счёт.");
+        }
 
         return account.fundsOnAccount(currency);
     }
 
     @Override
     public void commitTransfer(Transfer transferToCommit) {
+        checkTransferPossibility(transferToCommit);
 
+        // transaction imitation
+        Card donorCard = transferToCommit.getCardFrom();
+        Card acceptorCard = getCardByNumber(transferToCommit.getCardTo());
+        int amount = transferToCommit.getTransferAmount().getValue();
+        String currency = transferToCommit.getTransferAmount().getCurrency();
+        Account donorAccount = getAccountByCard(donorCard);
+        Account acceptorAccount = getAccountByCard(acceptorCard);
+
+        int donorValue = howManyFundsHas(donorCard, currency);
+        int acceptorValue = howManyFundsHas(acceptorCard, currency);
+
+        donorAccount.subtractFunds(currency, amount);
+        acceptorAccount.addFunds(currency, amount);
+
+        if (donorValue != howManyFundsHas(donorCard, currency) + amount ||
+            acceptorValue != howManyFundsHas(acceptorCard, currency) - amount)
+        {
+            donorAccount.getCurrencyAccounts().put(currency, donorValue);
+            acceptorAccount.getCurrencyAccounts().put(currency, acceptorValue);
+            log.error("Transfer {} not committed", transferToCommit);
+            throw new IllegalStateException("Перевод отменён из-за сбоя системы.");
+        }
+        log.info("Transfer {} committed", transferToCommit);
     }
 
     @Override
@@ -117,17 +148,33 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
 
     @Override
     public void checkTransferPossibility(Transfer request) {
+        Card donorCard = request.getCardFrom();
+        String currency = request.getTransferAmount().getCurrency();
+        validateCard(donorCard);
+        if (!isReadyForTransfer(donorCard.getCardNumber(), currency) ||
+             !isReadyForTransfer(request.getCardTo(), currency)) {
+            log.error("Some of the cards is not capable of such a transfer");
+            throw new TransferNotPossibleException("Перевод не может быть осуществлён");
+        }
 
+        if(request.getTransferAmount().getValue() > howManyFundsHas(donorCard, currency)) {
+            log.error("There's not enough funds at the card#{} for such a transfer", donorCard.getCardNumber());
+            throw new FundsInsufficientException("Не достаточно средств для осуществления перевода");
+        }
     }
 
     private void validateCard(Card card) throws CardNotFoundException, CardDataNotValidException {
         String cardNumber = card.getCardNumber();
 
-        if (!containsCardNumber(cardNumber))
+        if (!containsCardNumber(cardNumber)) {
+            log.error("Card #{} not found", cardNumber);
             throw new CardNotFoundException("не найдено карты с  №" + cardNumber);
+        }
 
-        if (!isValidCardData(card))
-            throw new CardDataNotValidException("Данные карты №" + cardNumber + " не соответствуют. К сожалению.");
+        if (!isValidCardData(card)) {
+            log.error("Card data are invalid");
+            throw new CardDataNotValidException("не найдено картДанные карты №" + cardNumber + " не соответствуют. К сожалению.");
+        }
 
     }
 
