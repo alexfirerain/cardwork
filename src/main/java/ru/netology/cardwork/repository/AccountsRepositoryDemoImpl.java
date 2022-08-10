@@ -41,12 +41,22 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         accounts.put(cardAdding.getCardNumber(), newRecord);
     }
 
-
+    /**
+     * Tells whether repository contains an account associated with such a number.
+     * @param number a number to be checked.
+     * @return {@code true} if such a number is present and vice versa.
+     */
     @Override
     public boolean containsCardNumber(String number) {
         return accounts.containsKey(number);
     }
 
+    /**
+     * Reports if the card with given number is capable of operations in given currency.
+     * @param cardNumber a number of card in question.
+     * @param currency   a name of currency in question.
+     * @return {@code true} if an account at this number is present, active and has ability for this currency.
+     */
     @Override
     public boolean isReadyForTransfer(String cardNumber, String currency) {
         Account account = accounts.get(cardNumber);
@@ -55,6 +65,12 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
                     && account.hasCurrencyAccount(currency);
     }
 
+    /**
+     * Compares the given card's data with data of the card with its number in repository.
+     * @param card a card's data to be verified.
+     * @return {@code true} if every field of card taken and card kept in repository coincide.
+     * @throws CardNotFoundException if a card with given number is absent from repository at all.
+     */
     @Override
     public boolean isValidCardData(Card card) throws CardNotFoundException {
         String cardRequestedNumber = card.getCardNumber();
@@ -111,6 +127,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         return account.fundsOnAccount(currency);
     }
 
+
     @Override
     public void commitTransfer(Transfer transferToCommit) {
         checkTransferPossibility(transferToCommit);
@@ -146,6 +163,13 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         return getAccountByCard(card).getContactData();
     }
 
+    /**
+     * Validates possibility of such a transfer operation, checking if both cards are present,
+     * active and capable for required currency, if data of donor card are valid against the corresponding
+     * in repository, and if this card holds enough funds to commit this transfer.
+     * If any of conditions is not met, throws an exception.
+     * @param request a Transfer object to be checked.
+     */
     @Override
     public void checkTransferPossibility(Transfer request) {
         Card donorCard = request.getCardFrom();
