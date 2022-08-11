@@ -9,7 +9,7 @@ import ru.netology.cardwork.model.Card;
 public interface AccountsRepository {
 
     /**
-     * Executes a given transfer operation: subtracts a needed amount from A-account and adds it up to B-account
+     * executes a given transfer operation: subtracts a needed amount from a-account and adds it up to b-account
      * regarding appropriate commission policy.
      * @param transferToCommit a model of the operation to perform containing
      *                         all required data of sender's card,
@@ -19,7 +19,8 @@ public interface AccountsRepository {
      * @throws CardNotFoundException  if any of two involved cards' number not found in the database.
      * @throws CardDataNotValidException    if any of card's miscellaneous data doesn't match to the entity in the database.
      * @throws TransferNotPossibleException   if the required sum in given currency exceeds the rest at the sender's account
-     *                                              or any of two involved cards is not active somehow.
+     *                                              or any of two involved cards is not active somehow
+     *                                              or don't have subaccounts in currency required.
      */
     void commitTransfer(Transfer transferToCommit) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
 

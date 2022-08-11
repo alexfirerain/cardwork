@@ -37,7 +37,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
      */
     public void addDefaultAccount(Card cardAdding) {
         Account newRecord = new Account(cardAdding);
-        newRecord.addAccount("RUB", 0);
+        newRecord.addCurrencySubaccount("RUB", 0);
         accounts.put(cardAdding.getCardNumber(), newRecord);
     }
 
@@ -149,8 +149,8 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         if (donorValue != howManyFundsHas(donorCard, currency) + amount ||
             acceptorValue != howManyFundsHas(acceptorCard, currency) - amount)
         {
-            donorAccount.getCurrencyAccounts().put(currency, donorValue);
-            acceptorAccount.getCurrencyAccounts().put(currency, acceptorValue);
+            donorAccount.getCurrencySubaccounts().put(currency, donorValue);
+            acceptorAccount.getCurrencySubaccounts().put(currency, acceptorValue);
             log.error("Transfer {} not committed", transferToCommit);
             throw new IllegalStateException("Перевод отменён из-за сбоя системы.");
         }
@@ -166,7 +166,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
     /**
      * Validates possibility of such a transfer operation, checking if both cards are present,
      * active and capable for required currency, if data of donor card are valid against the corresponding
-     * in repository, and if this card holds enough funds to commit this transfer.
+     * in the repository, and if this card holds enough funds to commit this transfer.
      * If any of conditions is not met, throws an exception.
      * @param request a Transfer object to be checked.
      */
@@ -197,7 +197,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
 
         if (!isValidCardData(card)) {
             log.error("Card data are invalid");
-            throw new CardDataNotValidException("не найдено картДанные карты №" + cardNumber + " не соответствуют. К сожалению.");
+            throw new CardDataNotValidException("Данные карты №" + cardNumber + " не соответствуют. К сожалению.");
         }
 
     }

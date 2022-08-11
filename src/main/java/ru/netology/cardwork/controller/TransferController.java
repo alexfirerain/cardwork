@@ -32,17 +32,13 @@ public class TransferController {
 
     @PostMapping("/transfer")
     public OperationIdDto acceptTransferRequest(@RequestBody @Valid Transfer request) {
-
-        log.info("a request {} received", request);
-
+        log.info("a request received: {}", request);
         return transferService.bidTransferRequest(request);
     }
 
     @PostMapping("/confirmOperation")
     public OperationIdDto confirmTransferRequest(@RequestBody @Valid ConfirmationDto confirmation) {
-
-        log.info("a confirmation {} received ", confirmation);
-
+        log.info("a confirmation received: {}", confirmation);
         return transferService.commitTransferRequest(confirmation);
     }
 
