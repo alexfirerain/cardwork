@@ -3,6 +3,7 @@ package ru.netology.cardwork.controller;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,11 +27,12 @@ public class ExceptionController {
     @ExceptionHandler({VerificationFailureException.class,
                         FundsInsufficientException.class,
                         CardNotFoundException.class})
-    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
-    ErrorResponseDto handleBadRequest(RuntimeException re) {
+//    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    ResponseEntity<ErrorResponseDto> handleBadRequest(RuntimeException re) {
+        log.debug("Caught an exception: {}", re.getClass());
         log.info("Transfer attempt rejected because of inappropriate request: {}", re.getLocalizedMessage());
-        return new ErrorResponseDto("Error in the request: " + re.getMessage(),
-                                                idCount.getAndIncrement());
+        return new ResponseEntity<>(new ErrorResponseDto("Error in the request: " + re.getMessage(),
+                idCount.getAndIncrement()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(TransferNotPossibleException.class)

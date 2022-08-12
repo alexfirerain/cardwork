@@ -102,13 +102,12 @@ public class Account {
                         Валютные подсчета:
                             """.formatted(cardEntity.toString(), contactData, isActive ? "да" : "нет"));
 
-        if (currencySubaccounts.size() == 0) {
+        if (currencySubaccounts.size() == 0)
             sb.append("нет%n");
-        } else {
+        else
             currencySubaccounts.forEach(
-                    (key, value) -> sb.append("%s: %d%n".formatted(key, value))
+                (key, value) -> sb.append("%s: %d%n".formatted(key, value))
             );
-        }
         return sb.toString();
     }
 }
