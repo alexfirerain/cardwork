@@ -66,10 +66,10 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
     }
 
     /**
-     * Compares the given card's data with data of the card with its number in repository.
+     * Compares the given card's data with data of the card with its number in the repository.
      * @param card a card's data to be verified.
-     * @return {@code true} if every field of card taken and card kept in repository coincide.
-     * @throws CardNotFoundException if a card with given number is absent from repository at all.
+     * @return {@code true} if every field of card taken and card kept in the repository coincide.
+     * @throws CardNotFoundException if a card with given number is absent from the repository at all.
      */
     @Override
     public boolean isValidCardData(Card card) throws CardNotFoundException {
