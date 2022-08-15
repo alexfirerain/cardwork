@@ -13,6 +13,21 @@ Content-Type: application/json
   }
 }
 
+### an incorrect request with shortened number
+POST http://localhost:5500/transfer/transfer
+Content-Type: application/json
+
+{
+  "cardFromNumber": "12345678123",
+  "cardFromValidTill": "03/25",
+  "cardFromCVV": "125",
+  "cardToNumber": "8765432187654321",
+  "amount": {
+    "value": 100,
+    "currency": "RUB"
+  }
+}
+
 ### an incorrect expired request
 POST http://localhost:5500/transfer/transfer
 Content-Type: application/json

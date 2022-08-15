@@ -51,7 +51,13 @@ public class TransferService {
         log.debug("A Transfer Service initialized");
     }
 
-
+    /**
+     * Accepts a request for transfer, checks in repository if such a transfer is possible,
+     * if ok, assigns it to a new operation id (provided via corresponding provider),
+     * sets it to the wait list and initiates a verification procedure (via corresponding provider).
+     * @param request a request being handled.
+     * @return  an OperationIdDto object wrapping newly assigned operation id.
+     */
     public OperationIdDto bidTransferRequest(Transfer request) {
         log.debug("TS received a request: {}", request);
         accountsRepository.checkTransferPossibility(request);
@@ -61,7 +67,7 @@ public class TransferService {
                 .performVerificationProcedure(request,
                         accountsRepository.getContactData(request.getCardFrom())
                 );
-
+        log.info("transfer request {} set to operationId {}", request, operationId);
         return new OperationIdDto(operationId);
     }
 
@@ -70,13 +76,15 @@ public class TransferService {
         String operationId = confirmation.getOperationId();
 
         if (!transfersInService.containsKey(operationId)) {
-            throw new RuntimeException("Нет операции для подтверждения.");
+            log.error("A code received for an operation that not mapped.");
+            throw new IllegalStateException("Нет операции для подтверждения.");
         }
 
         Transfer dealToCommit = transfersInService.remove(operationId);
 
         if (!verificationProvider.validate(dealToCommit, confirmation.getCode())) {
             transfersInService.put(operationId, dealToCommit);
+            log.warn("A code received does no match to the right one for operation#{}.", operationId);
             throw new VerificationFailureException("Код подтверждения не соответствует.");
         }
 

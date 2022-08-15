@@ -1,11 +1,13 @@
 package ru.netology.cardwork.providers.verification;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.netology.cardwork.dto.Transfer;
 
 import javax.validation.constraints.NotBlank;
 
 @Component
+@Slf4j
 public class VerificationProviderDemoImpl implements VerificationProvider {
 
     /**
@@ -21,6 +23,7 @@ public class VerificationProviderDemoImpl implements VerificationProvider {
      */
     @Override
     public void performVerificationProcedure(Transfer request, String confirmationAddress) {
+        log.info("verification process simulated");
     }
 
     /**

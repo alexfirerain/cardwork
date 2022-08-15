@@ -10,6 +10,7 @@ import ru.netology.cardwork.exception.TransferNotPossibleException;
 import ru.netology.cardwork.model.Account;
 import ru.netology.cardwork.model.Card;
 
+import javax.validation.Valid;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -53,9 +54,10 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
 
     /**
      * Reports if the card with given number is capable of operations in given currency.
+     * Warning: the validity of the card, whether is it expired etc., not checking.
      * @param cardNumber a number of card in question.
      * @param currency   a name of currency in question.
-     * @return {@code true} if an account at this number is present, active and has ability for this currency.
+     * @return {@code true} if the account at this number is present, active and has ability for this currency.
      */
     @Override
     public boolean isReadyForTransfer(String cardNumber, String currency) {
@@ -63,23 +65,6 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
             return account != null
                     && account.isActive()
                     && account.hasCurrencyAccount(currency);
-    }
-
-    /**
-     * Compares the given card's data with data of the card with its number in the repository.
-     * @param card a card's data to be verified.
-     * @return {@code true} if every field of card taken and card kept in the repository coincide.
-     * @throws CardNotFoundException if a card with given number is absent from the repository at all.
-     */
-    @Override
-    public boolean isValidCardData(Card card) throws CardNotFoundException {
-        String cardRequestedNumber = card.getCardNumber();
-        Card cardInQuestion = getCardByNumber(cardRequestedNumber);
-        if (cardInQuestion == null) {
-            log.error("No card #{} found", cardRequestedNumber);
-            throw new CardNotFoundException("Сведений о карте №" + cardRequestedNumber + " нет.");
-        }
-        return cardInQuestion.equals(card);
     }
 
     /**
@@ -94,10 +79,13 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
     /**
      * Retrieves from the repository an Account object
      * corresponding to the given Card.
+     * If such a card is absent from the repository
+     * or not equals the one with the same number, exception throws.
      * @param card card identities in question.
      * @return a fully qualified Account entity, {@code null} if there's no object with such identities in da base.
      */
-    private Account getAccountByCard(Card card) {
+    private Account getAccountByCard(Card card) throws CardNotFoundException,
+                                                       CardDataNotValidException {
         validateCard(card);
         return accounts.get(card.getCardNumber());
     }
@@ -114,9 +102,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
     public int howManyFundsHas(Card card,
                                String currency) throws CardNotFoundException,
                                                        CardDataNotValidException,
-                                                       TransferNotPossibleException {
-        validateCard(card);
-
+                                                       IllegalArgumentException {
         Account account = getAccountByCard(card);
 
         if (!account.hasCurrencyAccount(currency)) {
@@ -158,8 +144,8 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
     }
 
     @Override
-    public String getContactData(Card card) {
-        validateCard(card);
+    public String getContactData(Card card) throws CardNotFoundException,
+                                                   CardDataNotValidException {
         return getAccountByCard(card).getContactData();
     }
 
@@ -171,7 +157,9 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
      * @param request a Transfer object to be checked.
      */
     @Override
-    public void checkTransferPossibility(Transfer request) {
+    public void checkTransferPossibility(Transfer request) throws CardNotFoundException,
+                                                                  CardDataNotValidException,
+                                                                  TransferNotPossibleException {
         Card donorCard = request.getCardFrom();
         String currency = request.getTransferAmount().getCurrency();
         validateCard(donorCard);
@@ -187,7 +175,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         }
     }
 
-    private void validateCard(Card card) throws CardNotFoundException, CardDataNotValidException {
+    private void validateCard(@Valid Card card) throws CardNotFoundException, CardDataNotValidException {
         String cardNumber = card.getCardNumber();
 
         if (!containsCardNumber(cardNumber)) {
@@ -195,7 +183,7 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
             throw new CardNotFoundException("не найдено карты с  №" + cardNumber);
         }
 
-        if (!isValidCardData(card)) {
+        if (!card.equals(getCardByNumber(cardNumber))) {
             log.error("Card data are invalid");
             throw new CardDataNotValidException("Данные карты №" + cardNumber + " не соответствуют. К сожалению.");
         }

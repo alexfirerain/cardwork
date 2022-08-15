@@ -44,15 +44,6 @@ public interface AccountsRepository {
     boolean isReadyForTransfer(String cardNumber, String currency);
 
     /**
-     * Tells whether card's data correspond to those in the repository.
-     * @param card a card's data to be verified.
-     * @return {@code true} if all fields of the card in question match the entity in the repository,
-     * {@code false} otherwise.
-     * @throws CardNotFoundException if a card with such a number is absent from the repository at all.
-     */
-    boolean isValidCardData(Card card) throws CardNotFoundException;
-
-    /**
      * Tells how many funds is present at the card's account in given currency.
      * @param card     a card on which amount gets requested.
      * @param currency a currency in which amount gets requested.
@@ -73,6 +64,6 @@ public interface AccountsRepository {
      * Checks whether offered properties in the transaction request meet the criteria.
      * @param request a Transfer object to be checked.
      */
-    void checkTransferPossibility(Transfer request);
+    void checkTransferPossibility(Transfer request) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
 
 }
