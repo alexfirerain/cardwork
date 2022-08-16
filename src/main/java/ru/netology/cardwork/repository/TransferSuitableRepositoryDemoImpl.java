@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository
 @Slf4j
-public class AccountsRepositoryDemoImpl implements AccountsRepository {
+public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepository {
     /**
      * The implementation of banking structure holding a card number string as a key
      * and an Account object as a value.
@@ -42,53 +42,6 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         accounts.put(cardAdding.getCardNumber(), newRecord);
     }
 
-    /**
-     * Tells whether repository contains an account associated with such a number.
-     * @param number a number to be checked.
-     * @return {@code true} if such a number is present and vice versa.
-     */
-    @Override
-    public boolean containsCardNumber(String number) {
-        return accounts.containsKey(number);
-    }
-
-    /**
-     * Reports if the card with given number is capable of operations in given currency.
-     * Warning: the validity of the card, whether is it expired etc., not checking.
-     * @param cardNumber a number of card in question.
-     * @param currency   a name of currency in question.
-     * @return {@code true} if the account at this number is present, active and has ability for this currency.
-     */
-    @Override
-    public boolean isReadyForTransfer(String cardNumber, String currency) {
-        Account account = accounts.get(cardNumber);
-            return account != null
-                    && account.isActive()
-                    && account.hasCurrencyAccount(currency);
-    }
-
-    /**
-     * Retrieves from the repository a Card object which has given number.
-     * @param number a card number in question.
-     * @return a Card object with number in question; {@code null} if such a card is absent.
-     */
-    private Card getCardByNumber(String number) {
-        return accounts.get(number).getCardEntity();
-    }
-
-    /**
-     * Retrieves from the repository an Account object
-     * corresponding to the given Card.
-     * If such a card is absent from the repository
-     * or not equals the one with the same number, exception throws.
-     * @param card card identities in question.
-     * @return a fully qualified Account entity, {@code null} if there's no object with such identities in da base.
-     */
-    private Account getAccountByCard(Card card) throws CardNotFoundException,
-                                                       CardDataNotValidException {
-        validateCard(card);
-        return accounts.get(card.getCardNumber());
-    }
 
     /**
      * Reports funds available on given account at given card.
@@ -163,8 +116,8 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         Card donorCard = request.getCardFrom();
         String currency = request.getTransferAmount().getCurrency();
         validateCard(donorCard);
-        if (!isReadyForTransfer(donorCard.getCardNumber(), currency) ||
-             !isReadyForTransfer(request.getCardTo(), currency)) {
+        if (transferNotPossible(donorCard.getCardNumber(), currency) ||
+                transferNotPossible(request.getCardTo(), currency)) {
             log.error("Some of the cards is not capable of such a transfer");
             throw new TransferNotPossibleException("Перевод не может быть осуществлён");
         }
@@ -175,16 +128,68 @@ public class AccountsRepositoryDemoImpl implements AccountsRepository {
         }
     }
 
+
+
+
+    /*
+        Auxiliary internal functions.
+     */
+    /**
+     * Retrieves from the repository a Card object which has given number.
+     * @param number a card number in question.
+     * @return a Card object with number in question; {@code null} if such a card is absent.
+     */
+    private Card getCardByNumber(String number) {
+        return accounts.get(number).getCardEntity();
+    }
+
+    /**
+     * Retrieves from the repository an Account object
+     * corresponding to the given Card.
+     * If such a card is absent from the repository
+     * or not equals the one with the same number, exception throws.
+     * @param card card identities in question.
+     * @return a fully qualified Account entity, {@code null} if there's no object with such identities in da base.
+     */
+    private Account getAccountByCard(Card card) throws CardNotFoundException,
+            CardDataNotValidException {
+        validateCard(card);
+        return accounts.get(card.getCardNumber());
+    }
+
+    /**
+     * Tells whether a card with such a number is capable of a transaction in given currency.
+     * This means that there's a card with such number in the repository,
+     * it is active and do have an account in currency in question.
+     * None misc card data (whether is it expired etc.) are checked.
+     * @param cardNumber a number of card in question.
+     * @param currency   a name of currency in question.
+     * @return {@code true} if the account at this number is present,
+     * active and has ability for this currency. {@code false} otherwise.
+     */
+    private boolean transferNotPossible(String cardNumber, String currency) {
+        Account account = accounts.get(cardNumber);
+        return account == null
+                || !account.isActive()
+                || !account.hasCurrencyAccount(currency);
+    }
+
+    /**
+     * A procedure of validating a card: that it is present and equal to the entity in the repository.
+     * @param card a card being validated.
+     * @throws CardNotFoundException    if there's no such a card.
+     * @throws CardDataNotValidException    if any of card's fields doesn't match.
+     */
     private void validateCard(@Valid Card card) throws CardNotFoundException, CardDataNotValidException {
         String cardNumber = card.getCardNumber();
 
-        if (!containsCardNumber(cardNumber)) {
+        if (!accounts.containsKey(cardNumber)) {
             log.error("Card #{} not found", cardNumber);
             throw new CardNotFoundException("не найдено карты с  №" + cardNumber);
         }
 
         if (!card.equals(getCardByNumber(cardNumber))) {
-            log.error("Card data are invalid");
+            log.error("Card #{} data are invalid", cardNumber);
             throw new CardDataNotValidException("Данные карты №" + cardNumber + " не соответствуют. К сожалению.");
         }
 

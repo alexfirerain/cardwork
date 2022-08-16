@@ -7,7 +7,7 @@ import ru.netology.cardwork.dto.OperationIdDto;
 import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.VerificationFailureException;
 import ru.netology.cardwork.providers.verification.VerificationProvider;
-import ru.netology.cardwork.repository.AccountsRepository;
+import ru.netology.cardwork.repository.TransferSuitableRepository;
 import ru.netology.cardwork.providers.id.OperationIdProvider;
 
 import java.util.Map;
@@ -38,14 +38,14 @@ public class TransferService {
     /**
      * A repository this service operates with.
      */
-    final private AccountsRepository accountsRepository;
+    final private TransferSuitableRepository repository;
 
     public TransferService(OperationIdProvider operationIdProvider,
                            VerificationProvider verificationProvider,
-                           AccountsRepository accountsRepository) {
+                           TransferSuitableRepository repository) {
         this.operationIdProvider = operationIdProvider;
         this.verificationProvider = verificationProvider;
-        this.accountsRepository = accountsRepository;
+        this.repository = repository;
         transfersInService = new ConcurrentHashMap<>();
 
         log.debug("A Transfer Service initialized");
@@ -60,18 +60,18 @@ public class TransferService {
      */
     public OperationIdDto bidTransferRequest(Transfer request) {
         log.debug("TS received a request: {}", request);
-        accountsRepository.checkTransferPossibility(request);
-        String operationId = operationIdProvider.serveAnOperationId();
-        transfersInService.put(operationId, request);
+        repository.checkTransferPossibility(request);
         verificationProvider
                 .performVerificationProcedure(request,
-                        accountsRepository.getContactData(request.getCardFrom())
+                        repository.getContactData(request.getCardFrom())
                 );
+        String operationId = operationIdProvider.serveAnOperationId();
+        transfersInService.put(operationId, request);
         log.info("transfer request {} set to operationId {}", request, operationId);
         return new OperationIdDto(operationId);
     }
 
-    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {
+    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) { // TODO: wrap in Response Entity
         log.debug("TS received a confirmation: {}", confirmation);
         String operationId = confirmation.getOperationId();
 
@@ -88,7 +88,7 @@ public class TransferService {
             throw new VerificationFailureException("Код подтверждения не соответствует.");
         }
 
-        accountsRepository.commitTransfer(dealToCommit);
+        repository.commitTransfer(dealToCommit);
 
         log.info("Transfer committed: {}", dealToCommit);
         return new OperationIdDto(operationId);

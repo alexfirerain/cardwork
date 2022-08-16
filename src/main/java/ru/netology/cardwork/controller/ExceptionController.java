@@ -33,10 +33,11 @@ public class ExceptionController {
      * @param re an exception being caught.
      * @return  a response entity with status code 400 and an ErrorResponseDto as body.
      */
-    @ExceptionHandler({VerificationFailureException.class,
-                        CardNotFoundException.class,
-                        MethodArgumentNotValidException.class,
+    @ExceptionHandler({
+                        MethodArgumentNotValidException.class,      // why IllegalStateException for ErrorDto creeps out?
                         HttpMessageNotReadableException.class,
+                        CardNotFoundException.class,
+                        VerificationFailureException.class,
                         ConstraintViolationException.class})
     ResponseEntity<ErrorResponseDto> handleBadRequest(RuntimeException re) {
         log.debug("Caught an exception: {}", re.getClass());
@@ -62,7 +63,7 @@ public class ExceptionController {
 
     /**
      * Handles all other exceptional cases that are likely during server's exploitation.
-     * Particulary a situation when a verification code comes for the operation whose id is not at the wait list somehow.
+     * Particularly a situation when a verification code comes for the operation whose id is not at the wait list somehow.
      * @param se an exception being caught.
      * @return a response entity with status code 500 and an ErrorResponseDto as body.
      */

@@ -6,10 +6,25 @@ import ru.netology.cardwork.exception.CardNotFoundException;
 import ru.netology.cardwork.exception.TransferNotPossibleException;
 import ru.netology.cardwork.model.Card;
 
-public interface AccountsRepository {
+/**
+ * Contains abstract functionality for a repository capable of transfer operations
+ * (as defined in the MoneyTransferServiceSpecification).
+ * It implies that data are stored as accounts that are accessible via
+ * associated cards and hold contact data to get in touch with its owner.
+ * An implementation of this interface must be able to check possibility
+ * of an offered transfer and able to commit it.
+ * Also it will report of owner's contact data and the status of account in particular currency.
+ */
+public interface TransferSuitableRepository {
 
     /**
-     * executes a given transfer operation: subtracts a needed amount from a-account and adds it up to b-account
+     * Checks whether offered properties in the transaction request meet the criteria.
+     * @param request a Transfer object to be checked.
+     */
+    void checkTransferPossibility(Transfer request) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
+
+    /**
+     * Executes a given transfer operation: subtracts a needed amount from a-account and adds it up to b-account
      * regarding appropriate commission policy.
      * @param transferToCommit a model of the operation to perform containing
      *                         all required data of sender's card,
@@ -25,23 +40,11 @@ public interface AccountsRepository {
     void commitTransfer(Transfer transferToCommit) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
 
     /**
-     * Tells whether  a card with a given number is present in the repository.
-     * @param number a number to be checked.
-     * @return {@code true} if there's a card with a given number present.
+     * Reports contact data to get in touch with the card's owner.
+     * @param card a card whose owner's address is queried.
+     * @return a string containing owner's contact data.
      */
-    boolean containsCardNumber(String number);
-
-    /**
-     * Tells whether a card with such a number is ready for a transaction in given currency.
-     * This means that there's a card with such number in the repository,
-     * it is active and do have an account in currency in question.
-     * None misc card data are checked.
-     * @param cardNumber a number of card in question.
-     * @param currency   a name of currency in question.
-     * @return {@code true} if the number is present and corresponding card is active
-     * and has an appropriate account. {@code false} otherwise.
-     */
-    boolean isReadyForTransfer(String cardNumber, String currency);
+    String getContactData(Card card);
 
     /**
      * Tells how many funds is present at the card's account in given currency.
@@ -52,18 +55,5 @@ public interface AccountsRepository {
      * @throws CardDataNotValidException    if any of fields of given card doesn't match the entity in the repository.
      */
     int howManyFundsHas(Card card, String currency) throws CardNotFoundException, CardDataNotValidException;
-
-    /**
-     * Reports contact data to get in touch with the card's owner.
-     * @param card a card whose owner's address is queried.
-     * @return a string containing owner's contact data.
-     */
-    String getContactData(Card card);
-
-    /**
-     * Checks whether offered properties in the transaction request meet the criteria.
-     * @param request a Transfer object to be checked.
-     */
-    void checkTransferPossibility(Transfer request) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
 
 }
