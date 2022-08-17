@@ -8,7 +8,6 @@ import ru.netology.cardwork.model.TransferAmount;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-import java.text.ParseException;
 
 /**
  * An object being received as a request on a transfer deal.
@@ -22,7 +21,7 @@ public class Transfer {
     @Valid
     private final Card cardFrom;
     @NotBlank
-    @Pattern(regexp = "\\d{16,}")
+    @Pattern(regexp = "\\d{16,}", message = "номер карты по меньшей мере 16 цифр")
     private final String cardTo;
     @Valid
     private final TransferAmount transferAmount;
@@ -31,7 +30,7 @@ public class Transfer {
                     String cardFromValidTill,
                     String cardFromCVV,
                     String cardToNumber,
-                    TransferAmount amount) throws ParseException {
+                    TransferAmount amount) {
         this.cardFrom = new Card(cardFromNumber,
                                 cardFromValidTill,
                                 cardFromCVV);
@@ -43,6 +42,6 @@ public class Transfer {
 
     @Override
     public String toString() {
-        return "Перевод с [" + cardFrom + "] на карту №" + cardTo + " {" + transferAmount + "}";
+        return "Transfer {%s} from [%s] to card #%s ".formatted(transferAmount, cardFrom, cardTo);
     }
 }

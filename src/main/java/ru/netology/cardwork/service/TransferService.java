@@ -67,7 +67,7 @@ public class TransferService {
                 );
         String operationId = operationIdProvider.serveAnOperationId();
         transfersInService.put(operationId, request);
-        log.info("transfer request {} set to operationId {}", request, operationId);
+        log.info("transfer request [{}] set to operationId {}", request, operationId);
         return new OperationIdDto(operationId);
     }
 
@@ -76,7 +76,7 @@ public class TransferService {
         String operationId = confirmation.getOperationId();
 
         if (!transfersInService.containsKey(operationId)) {
-            log.error("A code received for an operation that not mapped.");
+            log.error("A code received for an operation that not mapped: id={}", operationId);
             throw new IllegalStateException("Нет операции для подтверждения.");
         }
 
@@ -90,7 +90,7 @@ public class TransferService {
 
         repository.commitTransfer(dealToCommit);
 
-        log.info("Transfer committed: {}", dealToCommit);
+        log.info("Transfer #{} committed: {}", operationId, dealToCommit);
         return new OperationIdDto(operationId);
     }
 }

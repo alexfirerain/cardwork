@@ -20,7 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Repository
 @Slf4j
-public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepository {
+public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
+                                                  ManageableAccountRepository {
     /**
      * The implementation of banking structure holding a card number string as a key
      * and an Account object as a value.
@@ -37,16 +38,19 @@ public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepos
      * to be an empty string. Assigns to it a new empty account in "RUB" currency.
      * @param cardAdding a card to be inserted into the base.
      */
+    @Override
     public void addDefaultAccount(Card cardAdding) {
-        Account newRecord = new Account(cardAdding);
-        newRecord.addCurrencySubaccount("RUB", 0);
-        accounts.put(cardAdding.getCardNumber(), newRecord);
+        addAccount(
+                (new Account(cardAdding))
+                        .addCurrencySubaccount("RUB", 0)
+        );
     }
 
     /**
-     * Just adds a new ready accaount to the repository.
+     * Just adds a new ready account to the repository.
      * @param account which is added.
      */
+    @Override
     public void addAccount(Account account) {
         String cardNumber = account.getCardNumber();
         if (accounts.containsKey(cardNumber)) {
@@ -56,16 +60,27 @@ public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepos
         log.info("Have account @cardNumber {} written to the base", cardNumber);
     }
 
+    @Override
     public void addAccounts(Account[] accounts) {
         Arrays.stream(accounts).forEach(this::addAccount);
     }
 
+    @Override
     public void resetAccounts() {
         accounts.clear();
     }
 
+    @Override
     public void deleteAccount(Card card) {
         accounts.remove(card.getCardNumber());
+    }
+
+    @Override
+    public void reassignAccountToCard(Account oldAccount, Card newCard) {
+        Account changingAccount = getAccountByCard(oldAccount.getCardEntity());
+        changingAccount.setCardEntity(newCard);
+        addAccount(changingAccount);
+        accounts.remove(oldAccount.getCardNumber());
     }
 
     /**
@@ -76,16 +91,16 @@ public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepos
      * @throws CardNotFoundException    if there's no such a card in the repository.
      * @throws CardDataNotValidException    if any of card data is not the same as in one in the repository.
      */
-    @Override
-    public int howManyFundsHas(Card card,
-                               String currency) throws CardNotFoundException,
+    private int howManyFundsHas(Card card,
+                                String currency) throws CardNotFoundException,
                                                        CardDataNotValidException,
                                                        IllegalArgumentException {
         Account account = getAccountByCard(card);
 
         if (account.noSuchCurrency(currency)) {
             log.error("Attempt to access unexisting currency account at card#{}", card.getCardNumber());
-            throw new IllegalArgumentException("На карте №" + card.getCardNumber() + " отсутствует " + currency + "-счёт.");
+            throw new IllegalArgumentException("На карте №%s отсутствует %s-счёт."
+                                                    .formatted(card.getCardNumber(), currency));
         }
 
         return account.fundsOnAccount(currency);

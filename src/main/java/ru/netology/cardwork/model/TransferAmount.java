@@ -18,13 +18,13 @@ public class TransferAmount {
     /**
      * Amount of funds to transfer.
      */
-    @NotNull
-    @Positive
+    @NotNull(message = "должна быть указана сумма перевода")
+    @Positive(message = "сумма перевода должна быть больше нуля")
     private final Integer value;
     /**
      * Currency of funds to transfer.
      */
-    @NotBlank
+    @NotBlank(message = "должна быть указана валюта")
     private final String currency;
 
     public TransferAmount(@NotNull @Positive Integer value, @NotBlank String currency) {

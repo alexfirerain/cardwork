@@ -13,7 +13,7 @@ import ru.netology.cardwork.model.Card;
  * associated cards and hold contact data to get in touch with its owner.
  * An implementation of this interface must be able to check possibility
  * of an offered transfer and able to commit it.
- * Also it will report of owner's contact data and the status of account in particular currency.
+ * Also it will report of owner's contact data.
  */
 public interface TransferSuitableRepository {
 
@@ -45,15 +45,5 @@ public interface TransferSuitableRepository {
      * @return a string containing owner's contact data.
      */
     String getContactData(Card card);
-
-    /**
-     * Tells how many funds is present at the card's account in given currency.
-     * @param card     a card on which amount gets requested.
-     * @param currency a currency in which amount gets requested.
-     * @return  amount of funds available on given card in given currency.
-     * @throws CardNotFoundException    if there's no card with such a number in the repository.
-     * @throws CardDataNotValidException    if any of fields of given card doesn't match the entity in the repository.
-     */
-    int howManyFundsHas(Card card, String currency) throws CardNotFoundException, CardDataNotValidException;
 
 }

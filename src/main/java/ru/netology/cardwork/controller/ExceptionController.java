@@ -44,10 +44,10 @@ public class ExceptionController {
         if (bad instanceof MethodArgumentNotValidException) {                                               // ???
             report = report.substring(report.lastIndexOf("[") + 1, report.lastIndexOf("]]"));
         } else if (bad instanceof HttpMessageNotReadableException) {
-            report = "невменяемая структура запроса";
+            report = "неправильная структура запроса";
         }
         log.info("Transfer attempt rejected because of inappropriate request: {}", report);
-        return new ResponseEntity<>(new ErrorResponseDto("Ошибка в запросе: " + report,
+        return new ResponseEntity<>(new ErrorResponseDto("Ошибка в запросе: %s".formatted(report),
                 idCount.getAndIncrement()), HttpStatus.BAD_REQUEST);
     }
 
@@ -62,7 +62,7 @@ public class ExceptionController {
     ResponseEntity<ErrorResponseDto> handleTransferError(TransferNotPossibleException tnpe) {
         log.debug("Caught an exception: {}", tnpe.getClass());
         log.info("Transfer attempt rejected because of error: {}", tnpe.getLocalizedMessage());
-        return new ResponseEntity<>(new ErrorResponseDto("Совершение перевода невозможно: " + tnpe.getMessage(),
+        return new ResponseEntity<>(new ErrorResponseDto("Совершение перевода невозможно: %s".formatted(tnpe.getMessage()),
                                                 idCount.getAndIncrement()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -76,7 +76,7 @@ public class ExceptionController {
     ResponseEntity<ErrorResponseDto> handleServerError(Exception se) {
         log.debug("Caught an exception: {}", se.getClass());
         log.info("Some error at the server: {}", se.getLocalizedMessage());
-        return new ResponseEntity<>(new ErrorResponseDto("Error at the server: " + se.getMessage(),
+        return new ResponseEntity<>(new ErrorResponseDto("Error at the server: %s".formatted(se.getMessage()),
                                                 idCount.getAndIncrement()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
