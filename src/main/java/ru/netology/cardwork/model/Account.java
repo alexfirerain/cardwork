@@ -56,11 +56,13 @@ public class Account {
     public boolean isActive() {
         return isActive;
     }
-    public void setActive() {
+    public Account setActive() {
         isActive = true;
+        return this;
     }
-    public void setInactive() {
+    public Account setInactive() {
         isActive = false;
+        return this;
     }
     public boolean noSuchCurrency(String currency) {
         return !currencySubaccounts.containsKey(currency);
@@ -72,6 +74,11 @@ public class Account {
     }
     public Account addCurrencySubaccount(String currency, int value) {
         currencySubaccounts.put(currency, value);
+        return this;
+    }
+
+    public Account addCurrencySubaccount(String currency) {
+        currencySubaccounts.put(currency, 0);
         return this;
     }
 

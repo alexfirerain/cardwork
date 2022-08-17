@@ -11,6 +11,7 @@ import ru.netology.cardwork.model.Account;
 import ru.netology.cardwork.model.Card;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,9 +48,25 @@ public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepos
      * @param account which is added.
      */
     public void addAccount(Account account) {
+        String cardNumber = account.getCardNumber();
+        if (accounts.containsKey(cardNumber)) {
+            log.warn("Card #{} already in da base, will be rewritten", cardNumber);
+        }
         accounts.put(account.getCardNumber(), account);
+        log.info("Have account @cardNumber {} written to the base", cardNumber);
     }
 
+    public void addAccounts(Account[] accounts) {
+        Arrays.stream(accounts).forEach(this::addAccount);
+    }
+
+    public void resetAccounts() {
+        accounts.clear();
+    }
+
+    public void deleteAccount(Card card) {
+        accounts.remove(card.getCardNumber());
+    }
 
     /**
      * Reports funds available on given account at given card.
