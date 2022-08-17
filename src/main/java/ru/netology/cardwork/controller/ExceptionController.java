@@ -27,22 +27,27 @@ public class ExceptionController {
 
     /**
      * Handles situations when something is not ok with data in request:
-     * constrains on fields are broken or requierd fields missing,
+     * constrains on fields are broken or required fields missing,
      * when any of cards involved is absent or data of donor card not valid,
      * also when the received verification code is not correct.
-     * @param re an exception being caught.
+     * @param bad an exception being caught.
      * @return  a response entity with status code 400 and an ErrorResponseDto as body.
      */
-    @ExceptionHandler({
-                        MethodArgumentNotValidException.class,      // why IllegalStateException for ErrorDto creeps out?
+    @ExceptionHandler({MethodArgumentNotValidException.class,
                         HttpMessageNotReadableException.class,
                         CardNotFoundException.class,
                         VerificationFailureException.class,
                         ConstraintViolationException.class})
-    ResponseEntity<ErrorResponseDto> handleBadRequest(RuntimeException re) {
-        log.debug("Caught an exception: {}", re.getClass());
-        log.info("Transfer attempt rejected because of inappropriate request: {}", re.getLocalizedMessage());
-        return new ResponseEntity<>(new ErrorResponseDto("Ошибка в запросе: " + re.getMessage(),
+    ResponseEntity<ErrorResponseDto> handleBadRequest(Exception bad) {
+        log.debug("Caught an exception: {}", bad.getClass());
+        String report = bad.getLocalizedMessage();
+        if (bad instanceof MethodArgumentNotValidException) {                                               // ???
+            report = report.substring(report.lastIndexOf("[") + 1, report.lastIndexOf("]]"));
+        } else if (bad instanceof HttpMessageNotReadableException) {
+            report = "невменяемая структура запроса";
+        }
+        log.info("Transfer attempt rejected because of inappropriate request: {}", report);
+        return new ResponseEntity<>(new ErrorResponseDto("Ошибка в запросе: " + report,
                 idCount.getAndIncrement()), HttpStatus.BAD_REQUEST);
     }
 
@@ -50,7 +55,7 @@ public class ExceptionController {
      * Handles situations when the request is ok but the transfer is not possible for some reason:
      * when any of cards involved is inactive or doesn't have a proper currency account, or when funds at donor account
      * are insufficient.
-     * @param tnpe an exceptioon being caught.
+     * @param tnpe an exception being caught.
      * @return  a response entity with status code 500 and an ErrorResponseDto as body.
      */
     @ExceptionHandler(TransferNotPossibleException.class)
@@ -62,7 +67,7 @@ public class ExceptionController {
     }
 
     /**
-     * Handles all other exceptional cases that are likely during server's exploitation.
+     * Handles all other exceptional cases that are likely during service exploitation.
      * Particularly a situation when a verification code comes for the operation whose id is not at the wait list somehow.
      * @param se an exception being caught.
      * @return a response entity with status code 500 and an ErrorResponseDto as body.

@@ -40,7 +40,7 @@ public class Account {
 
     public Account(Card cardAdding) {
         this(cardAdding,  "", true);
-        log.debug(this.toString());
+        log.debug("Account constructed: {}", this);
     }
 
     public String getCardNumber() {
@@ -62,11 +62,11 @@ public class Account {
     public void setInactive() {
         isActive = false;
     }
-    public boolean hasCurrencyAccount(String currency) {
-        return currencySubaccounts.containsKey(currency);
+    public boolean noSuchCurrency(String currency) {
+        return !currencySubaccounts.containsKey(currency);
     }
     public int fundsOnAccount(String currency) {
-        if (!hasCurrencyAccount(currency)) throwIAEofNoCurrency();
+        if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         return currencySubaccounts.get(currency);
     }
@@ -76,13 +76,13 @@ public class Account {
     }
 
     public int addFunds(String currency, int value) {
-        if (!hasCurrencyAccount(currency)) throwIAEofNoCurrency();
+        if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         currencySubaccounts.put(currency, currencySubaccounts.get(currency) + value);
         return currencySubaccounts.get(currency);
     }
     public int subtractFunds(String currency, int value) {
-        if (!hasCurrencyAccount(currency)) throwIAEofNoCurrency();
+        if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         // the card is ABLE of keeping negative accounts, so no checking for negative values needed
         currencySubaccounts.put(currency, currencySubaccounts.get(currency) - value);

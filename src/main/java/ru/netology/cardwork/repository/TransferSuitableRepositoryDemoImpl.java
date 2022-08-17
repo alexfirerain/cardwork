@@ -42,6 +42,14 @@ public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepos
         accounts.put(cardAdding.getCardNumber(), newRecord);
     }
 
+    /**
+     * Just adds a new ready accaount to the repository.
+     * @param account which is added.
+     */
+    public void addAccount(Account account) {
+        accounts.put(account.getCardNumber(), account);
+    }
+
 
     /**
      * Reports funds available on given account at given card.
@@ -58,7 +66,7 @@ public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepos
                                                        IllegalArgumentException {
         Account account = getAccountByCard(card);
 
-        if (!account.hasCurrencyAccount(currency)) {
+        if (account.noSuchCurrency(currency)) {
             log.error("Attempt to access unexisting currency account at card#{}", card.getCardNumber());
             throw new IllegalArgumentException("На карте №" + card.getCardNumber() + " отсутствует " + currency + "-счёт.");
         }
@@ -171,7 +179,7 @@ public class TransferSuitableRepositoryDemoImpl implements TransferSuitableRepos
         Account account = accounts.get(cardNumber);
         return account == null
                 || !account.isActive()
-                || !account.hasCurrencyAccount(currency);
+                || account.noSuchCurrency(currency);
     }
 
     /**

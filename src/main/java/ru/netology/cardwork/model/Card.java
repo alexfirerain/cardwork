@@ -33,15 +33,20 @@ public class Card {
      * A model object representation of a bank Card.
      * @param cardNumber    the card's unique id number.
      * @param validTill     month and year in future when the card expires.
-     * @param cardCVV       a miscellaneous card's CVV.
-     * @throws ParseException   if extraction of date from string not successful.
+     *                      If the pattern received not recognized, the zero-date is set.
+     * @param cardCVV       an additional CVV of the card.
      */
     public Card(String cardNumber,
                 String validTill,
-                String cardCVV) throws ParseException {
+                String cardCVV) {
         SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
         this.cardNumber = cardNumber;
-        this.validTill = dateFormatter.parse(validTill);
+        try {
+            this.validTill = dateFormatter.parse(validTill);
+        } catch (ParseException e) {
+            log.warn("the date pattern not recognized, a zero date is set to card#{}", cardNumber);
+            this.validTill = new Date(0L);
+        }
         this.cardCVV = cardCVV;
 
         log.debug("Card constructed: {}", this);
