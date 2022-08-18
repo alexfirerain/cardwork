@@ -84,7 +84,9 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         Account changingAccount = getAccountByCard(oldAccount.getCardEntity());
         changingAccount.setCardEntity(newCard);
         addAccount(changingAccount);
-        accounts.remove(oldAccount.getCardNumber());
+        if (!changingAccount.getCardNumber().equals(oldAccount.getCardNumber())) {
+            accounts.remove(oldAccount.getCardNumber());
+        }
     }
 
     /**

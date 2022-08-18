@@ -64,6 +64,11 @@ public class Account {
         isActive = false;
         return this;
     }
+    public Account setContactData(String contactData) {
+        this.contactData = contactData;
+        return this;
+    }
+
     public boolean noSuchCurrency(String currency) {
         return !currencySubaccounts.containsKey(currency);
     }

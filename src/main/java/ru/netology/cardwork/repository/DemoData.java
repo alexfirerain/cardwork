@@ -13,9 +13,11 @@ public class DemoData {
     public static final Account ACCOUNT_1 = (new Account(CARD_1))
                               .addCurrencySubaccount("RUB", 3000);
     public static final Account ACCOUNT_2 = (new Account(CARD_2))
-                              .addCurrencySubaccount("RUB", 0);
+                              .addCurrencySubaccount("RUB")
+                              .setContactData("post@newage.org");
     public static final Account ACCOUNT_3 = (new Account(CARD_3))
-                              .addCurrencySubaccount("RUB", 30000);
+                              .addCurrencySubaccount("RUB", 30000)
+                              .setContactData("на деревню дедушке");
     public static final Account ACCOUNT_4 = (new Account(CARD_4))
                               .addCurrencySubaccount("RUB", 300000)
                               .setInactive();
