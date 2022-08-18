@@ -110,7 +110,7 @@ public class Account {
                             """.formatted(cardEntity.toString(), contactData, isActive ? "да" : "нет"));
 
         if (currencySubaccounts.size() == 0)
-            sb.append("нет%n");
+            sb.append("\tнет\n");
         else
             currencySubaccounts.forEach(
                 (key, value) -> sb.append("%s: %d%n".formatted(key, value))

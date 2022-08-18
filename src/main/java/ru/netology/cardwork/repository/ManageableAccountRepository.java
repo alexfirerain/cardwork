@@ -3,6 +3,11 @@ package ru.netology.cardwork.repository;
 import ru.netology.cardwork.model.Account;
 import ru.netology.cardwork.model.Card;
 
+/**
+ * Contains abstract functionality for a repository fitted for storing and
+ * overall management of money accounts (suitable as in the MoneyTransferServiceSpecification).
+ * With this, accounts can be added, deleted, purged or changed.
+ */
 public interface ManageableAccountRepository {
     /**
      * Puts a Card object to the repository as a new active Account, assuming contactData

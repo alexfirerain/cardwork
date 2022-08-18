@@ -28,6 +28,10 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      */
     private final Map<String, Account> accounts = new ConcurrentHashMap<>();
 
+    public AccountRepositoryDemoImpl() {
+        // TODO: как это кошернее всего реализовать для тестового профиля?
+        addAccounts(DemoData.ALL_ACCOUNTS);
+    }
 
 /*
     Methods managing Entities.
