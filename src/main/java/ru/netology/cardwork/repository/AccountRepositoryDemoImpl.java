@@ -28,6 +28,8 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      */
     private final Map<String, Account> accounts = new ConcurrentHashMap<>();
 
+    public final double COMMISSION_RATE = 0.01;
+
     public AccountRepositoryDemoImpl() {
         // TODO: как это кошернее всего реализовать для тестового профиля?
         addAccounts(DemoData.ALL_ACCOUNTS);
@@ -46,7 +48,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
     public void addDefaultAccount(Card cardAdding) {
         addAccount(
                 (new Account(cardAdding))
-                        .addCurrencySubaccount("RUB", 0)
+                        .addCurrencySubaccount("RUB", 0.)
         );
     }
 
@@ -89,62 +91,34 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         }
     }
 
+
     /**
      * Reports funds available on given account at given card.
+     *
      * @param card     a card on which amount gets requested.
      * @param currency a currency in which amount gets requested.
      * @return state of the account in given currency, {@code 0} if account in given currency is absent at this card.
-     * @throws CardNotFoundException    if there's no such a card in the repository.
-     * @throws CardDataNotValidException    if any of card data is not the same as in one in the repository.
+     * @throws CardNotFoundException     if there's no such a card in the repository.
+     * @throws CardDataNotValidException if any of card data is not the same as in one in the repository.
      */
-    private int howManyFundsHas(Card card,
-                                String currency) throws CardNotFoundException,
-                                                       CardDataNotValidException,
-                                                       IllegalArgumentException {
+    private double howManyFundsHas(Card card,
+                                   String currency) throws CardNotFoundException,
+            CardDataNotValidException,
+            IllegalArgumentException {
         Account account = getAccountByCard(card);
 
         if (account.noSuchCurrency(currency)) {
-            log.error("Attempt to access unexisting currency account at card#{}", card.getCardNumber());
+            log.error("Attempt to access unexisting currency {} account at card#{}", currency, card.getCardNumber());
             throw new IllegalArgumentException("На карте №%s отсутствует %s-счёт."
-                                                    .formatted(card.getCardNumber(), currency));
+                    .formatted(card.getCardNumber(), currency));
         }
 
         return account.fundsOnAccount(currency);
     }
 
-
-    @Override
-    public void commitTransfer(Transfer transferToCommit) {
-        checkTransferPossibility(transferToCommit);
-
-        // transaction imitation
-        Card donorCard = transferToCommit.getCardFrom();
-        Card acceptorCard = getCardByNumber(transferToCommit.getCardTo());
-        int amount = transferToCommit.getTransferAmount().getValue();
-        String currency = transferToCommit.getTransferAmount().getCurrency();
-        Account donorAccount = getAccountByCard(donorCard);
-        Account acceptorAccount = getAccountByCard(acceptorCard);
-
-        int donorValue = howManyFundsHas(donorCard, currency);
-        int acceptorValue = howManyFundsHas(acceptorCard, currency);
-
-        donorAccount.subtractFunds(currency, amount);
-        acceptorAccount.addFunds(currency, amount);
-
-        if (donorValue != howManyFundsHas(donorCard, currency) + amount ||
-            acceptorValue != howManyFundsHas(acceptorCard, currency) - amount)
-        {
-            donorAccount.getCurrencySubaccounts().put(currency, donorValue);
-            acceptorAccount.getCurrencySubaccounts().put(currency, acceptorValue);
-            log.error("Transfer {} not committed", transferToCommit);
-            throw new IllegalStateException("Перевод отменён из-за сбоя системы.");
-        }
-        log.info("Transfer {} committed", transferToCommit);
-    }
-
     @Override
     public String getContactData(Card card) throws CardNotFoundException,
-                                                   CardDataNotValidException {
+            CardDataNotValidException {
         return getAccountByCard(card).getContactData();
     }
 
@@ -168,10 +142,41 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
             throw new TransferNotPossibleException("Перевод не может быть осуществлён");
         }
 
-        if(request.getTransferAmount().getValue() > howManyFundsHas(donorCard, currency)) {
+        double sumRequired = roundToCents(request.getTransferAmount().getValue() * (1 + COMMISSION_RATE));
+        if(sumRequired > howManyFundsHas(donorCard, currency)) {
             log.error("There's not enough funds at the card#{} for such a transfer", donorCard.getCardNumber());
             throw new FundsInsufficientException("Не достаточно средств для осуществления перевода");
         }
+    }
+
+    @Override
+    public void commitTransfer(Transfer transferToCommit) {
+        checkTransferPossibility(transferToCommit);
+
+        // transaction imitation
+        Card donorCard = transferToCommit.getCardFrom();
+        Card acceptorCard = getCardByNumber(transferToCommit.getCardTo());
+        double amount = (double) transferToCommit.getTransferAmount().getValue();
+        double commission = roundToCents(amount * COMMISSION_RATE);
+        String currency = transferToCommit.getTransferAmount().getCurrency();
+        Account donorAccount = getAccountByCard(donorCard);
+        Account acceptorAccount = getAccountByCard(acceptorCard);
+
+        double donorValue = howManyFundsHas(donorCard, currency);
+        double acceptorValue = howManyFundsHas(acceptorCard, currency);
+
+        donorAccount.subtractFunds(currency, amount);
+        acceptorAccount.addFunds(currency, amount);
+
+        if (donorValue != howManyFundsHas(donorCard, currency) + amount ||
+                acceptorValue != howManyFundsHas(acceptorCard, currency) - amount)
+        {
+            donorAccount.getCurrencySubaccounts().put(currency, donorValue);
+            acceptorAccount.getCurrencySubaccounts().put(currency, acceptorValue);
+            log.error("Transfer {} not committed", transferToCommit);
+            throw new IllegalStateException("Перевод отменён из-за сбоя системы.");
+        }
+        log.info("Transfer {} committed", transferToCommit);
     }
 
 
@@ -241,4 +246,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
 
     }
 
+    private double roundToCents(double value) {
+        return Math.round(value * 100) / 100.;
+    }
 }

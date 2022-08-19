@@ -20,6 +20,7 @@ public class DemoData {
                               .setContactData("на деревню дедушке");
     public static final Account ACCOUNT_4 = (new Account(CARD_4))
                               .addCurrencySubaccount("RUB", 300000)
+                              .setContactData("+70008885577")
                               .setInactive();
 
     public static final Account[] ALL_ACCOUNTS = {

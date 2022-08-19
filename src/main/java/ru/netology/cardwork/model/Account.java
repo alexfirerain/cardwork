@@ -36,7 +36,7 @@ public class Account {
      * and value in Integer as a value.
      * Using integer values is as queer applicable for financials as required in this task.
      */
-    private final Map<String, Integer> currencySubaccounts = new ConcurrentHashMap<>();
+    private final Map<String, Double> currencySubaccounts = new ConcurrentHashMap<>();
 
     public Account(Card cardAdding) {
         this(cardAdding,  "", true);
@@ -72,28 +72,28 @@ public class Account {
     public boolean noSuchCurrency(String currency) {
         return !currencySubaccounts.containsKey(currency);
     }
-    public int fundsOnAccount(String currency) {
+    public double fundsOnAccount(String currency) {
         if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         return currencySubaccounts.get(currency);
     }
-    public Account addCurrencySubaccount(String currency, int value) {
+    public Account addCurrencySubaccount(String currency, double value) {
         currencySubaccounts.put(currency, value);
         return this;
     }
 
     public Account addCurrencySubaccount(String currency) {
-        currencySubaccounts.put(currency, 0);
+        currencySubaccounts.put(currency, 0.);
         return this;
     }
 
-    public int addFunds(String currency, int value) {
+    public double addFunds(String currency, double value) {
         if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         currencySubaccounts.put(currency, currencySubaccounts.get(currency) + value);
         return currencySubaccounts.get(currency);
     }
-    public int subtractFunds(String currency, int value) {
+    public double subtractFunds(String currency, double value) {
         if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         // the card is ABLE of keeping negative accounts, so no checking for negative values needed
@@ -118,7 +118,7 @@ public class Account {
             sb.append("\tнет\n");
         else
             currencySubaccounts.forEach(
-                (key, value) -> sb.append("%s: %d%n".formatted(key, value))
+                (key, value) -> sb.append("%s: %.2f%n".formatted(key, value))
             );
         return sb.toString();
     }

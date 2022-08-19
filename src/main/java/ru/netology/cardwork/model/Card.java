@@ -30,7 +30,7 @@ public class Card {
     private String cardCVV;
 
     /**
-     * A model object representation of a bank Card.
+     * A model object representation of a bank Card defined by three strings.
      * @param cardNumber    the card's unique id number.
      * @param validTill     month and year in future when the card expires.
      *                      If the pattern received not recognized, the zero-date is set.
@@ -54,6 +54,7 @@ public class Card {
 
     @Override
     public String toString() {
-        return "Карта №" + cardNumber + " (действительна по " + validTill + ", CVV " + cardCVV + ")";
+        return "Card #%s (valid till %s, CVV %s)"
+                .formatted(cardNumber, validTill, cardCVV);
     }
 }
