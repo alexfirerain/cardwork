@@ -26,12 +26,12 @@ public class TransferService {
     final private Map<String, Transfer> transfersInService;
 
     /**
-     * The source of operational IDs to assign to the transfers in service.
+     * The source of IDs to assign to operations in service.
      */
     final private OperationIdProvider operationIdProvider;
 
     /**
-     * The source of verification codes to verify the transfers in service.
+     * The performer of verification to send and check verification codes for transfers in service.
      */
     final private VerificationProvider verificationProvider;
 
@@ -71,7 +71,13 @@ public class TransferService {
         return new OperationIdDto(operationId);
     }
 
-    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) { // TODO: wrap in Response Entity
+    /**
+     * Accepts a verification object, sends received code to the verificationProvider,
+     * then, if ok, tells the repository to commit the scheduled transfer.
+     * @param confirmation a confirmation object received.
+     * @return  a new OperationIdDto with the performed operation's ID. If something wrong, throws an exception.
+     */
+    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {     // TODO: wrap in Response Entity
         log.debug("TS received a confirmation: {}", confirmation);
         String operationId = confirmation.getOperationId();
 

@@ -103,8 +103,8 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      */
     private double howManyFundsHas(Card card,
                                    String currency) throws CardNotFoundException,
-            CardDataNotValidException,
-            IllegalArgumentException {
+                                                           CardDataNotValidException,
+                                                           IllegalArgumentException {
         Account account = getAccountByCard(card);
 
         if (account.noSuchCurrency(currency)) {
@@ -198,12 +198,13 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * Retrieves from the repository an Account object
      * corresponding to the given Card.
      * If such a card is absent from the repository
-     * or not equals the one with the same number, exception throws.
+     * or not equals in details to the one with the same number, exception throws.
      * @param card card identities in question.
      * @return a fully qualified Account entity, {@code null} if there's no object with such identities in da base.
+     * @throws CardNotFoundException     if there's no card with such a number in the repository.
+     * @throws CardDataNotValidException    if any of card's fields differ from the ones in the repository.
      */
-    private Account getAccountByCard(Card card) throws CardNotFoundException,
-            CardDataNotValidException {
+    private Account getAccountByCard(Card card) {
         validateCard(card);
         return accounts.get(card.getCardNumber());
     }

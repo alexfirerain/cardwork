@@ -42,6 +42,7 @@ public class Transfer {
 
     @Override
     public String toString() {
-        return "Transfer {%s} from [%s] to card #%s ".formatted(transferAmount, cardFrom, cardTo);
+        return "Transfer {%s} from card#%s to card #%s"
+                .formatted(transferAmount.toString(), cardFrom.getCardNumber(), cardTo);
     }
 }
