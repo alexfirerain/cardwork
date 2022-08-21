@@ -28,7 +28,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      */
     private final Map<String, Account> accounts = new ConcurrentHashMap<>();
 
-    public final double COMMISSION_RATE = 0.01;
+    private final Map<String, Double> commissionAccount = new ConcurrentHashMap<>();
 
     public AccountRepositoryDemoImpl() {
         // TODO: как это кошернее всего реализовать для тестового профиля?
@@ -130,7 +130,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * @param request a Transfer object to be checked.
      */
     @Override
-    public void checkTransferPossibility(Transfer request) throws CardNotFoundException,
+    public void checkTransferPossibility(Transfer request, double commissionRate) throws CardNotFoundException,
                                                                   CardDataNotValidException,
                                                                   TransferNotPossibleException {
         Card donorCard = request.getCardFrom();
@@ -142,7 +142,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
             throw new TransferNotPossibleException("Перевод не может быть осуществлён");
         }
 
-        double sumRequired = roundToCents(request.getTransferAmount().getValue() * (1 + COMMISSION_RATE));
+        double sumRequired = roundToCents(request.getTransferAmount().getValue() * (1 + commissionRate));
         if(sumRequired > howManyFundsHas(donorCard, currency)) {
             log.error("There's not enough funds at the card#{} for such a transfer", donorCard.getCardNumber());
             throw new FundsInsufficientException("Не достаточно средств для осуществления перевода");
@@ -150,33 +150,42 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
     }
 
     @Override
-    public void commitTransfer(Transfer transferToCommit) {
-        checkTransferPossibility(transferToCommit);
+    public void commitTransfer(Transfer transferToCommit, double commissionRate) {
+        checkTransferPossibility(transferToCommit, commissionRate);
 
         // transaction imitation
         Card donorCard = transferToCommit.getCardFrom();
         Card acceptorCard = getCardByNumber(transferToCommit.getCardTo());
         double amount = (double) transferToCommit.getTransferAmount().getValue();
-        double commission = roundToCents(amount * COMMISSION_RATE);
+        double commission = roundToCents(amount * commissionRate);
         String currency = transferToCommit.getTransferAmount().getCurrency();
         Account donorAccount = getAccountByCard(donorCard);
         Account acceptorAccount = getAccountByCard(acceptorCard);
 
-        double donorValue = howManyFundsHas(donorCard, currency);
-        double acceptorValue = howManyFundsHas(acceptorCard, currency);
+        double oldDonorValue = howManyFundsHas(donorCard, currency);
+        double oldAcceptorValue = howManyFundsHas(acceptorCard, currency);
+        double oldCommissionAccountValue = commissionAccount.get(currency) == null ?
+                                            0 : commissionAccount.get(currency);
 
-        donorAccount.subtractFunds(currency, amount);
+        donorAccount.subtractFunds(currency, amount + commission);
         acceptorAccount.addFunds(currency, amount);
+        commissionAccount.merge(currency, commission, Double::sum);
 
-        if (donorValue != howManyFundsHas(donorCard, currency) + amount ||
-                acceptorValue != howManyFundsHas(acceptorCard, currency) - amount)
+        if (oldDonorValue - amount - commission != howManyFundsHas(donorCard, currency) ||
+                oldAcceptorValue + amount != howManyFundsHas(acceptorCard, currency) ||
+                oldCommissionAccountValue + commission != commissionAccount.get(currency))
         {
-            donorAccount.getCurrencySubaccounts().put(currency, donorValue);
-            acceptorAccount.getCurrencySubaccounts().put(currency, acceptorValue);
+            donorAccount.getCurrencySubaccounts().put(currency, oldDonorValue);
+            acceptorAccount.getCurrencySubaccounts().put(currency, oldAcceptorValue);
+            commissionAccount.put(currency, oldCommissionAccountValue);
             log.error("Transfer {} not committed", transferToCommit);
             throw new IllegalStateException("Перевод отменён из-за сбоя системы.");
         }
-        log.info("Transfer {} committed", transferToCommit);
+
+        log.info("{} committed (commission: {})",
+                                    transferToCommit,
+                                    "%.2f %s".formatted(commission, currency));
+        log.debug(reportAccountsState());
     }
 
 
@@ -250,4 +259,19 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
     private double roundToCents(double value) {
         return Math.round(value * 100) / 100.;
     }
+
+    public String reportAccountsState() {
+        StringBuilder report = new StringBuilder("\n=== %s: ===\n".formatted(this.toString()));
+
+        for (Account account : accounts.values()) {
+            report.append("#%s%s:\n".formatted(account.getCardNumber(), account.isActive() ? "" : " (inactive)"));
+            report.append(Account.listSubaccounts(account.getCurrencySubaccounts(), "-"));
+        }
+
+        report.append("commission account:\n%s"
+                        .formatted(Account.listSubaccounts(commissionAccount, "-")));
+
+        return report.toString();
+    }
+
 }

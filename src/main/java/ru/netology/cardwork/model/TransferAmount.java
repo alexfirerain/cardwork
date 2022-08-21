@@ -36,6 +36,6 @@ public class TransferAmount {
 
     @Override
     public String toString() {
-        return value.toString() + currency;
+        return "%s %s".formatted(value.toString(), currency);
     }
 }

@@ -106,20 +106,30 @@ public class Account {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("""
-                    Счёт:
-                        Карта: %s;
-                        Контактные данные: %s;
-                        Активен: %s;
-                        Валютные подсчета:
-                            """.formatted(cardEntity.toString(), contactData, isActive ? "да" : "нет"));
+        return """
+                
+                Счёт:
+                    Карта: %s;
+                    Контактные данные: %s;
+                    Активен: %s;
+                    Валютные подсчета:
+                    %s
+                        """.formatted(cardEntity.toString(),
+                                        contactData,
+                                        isActive ? "да" : "нет",
+                                        listSubaccounts(currencySubaccounts, "нет"));
+    }
 
-        if (currencySubaccounts.size() == 0)
-            sb.append("\tнет\n");
-        else
-            currencySubaccounts.forEach(
-                (key, value) -> sb.append("%s: %.2f%n".formatted(key, value))
+    public static String listSubaccounts(Map<String, Double> accountsMap, String noneValue) {
+        StringBuilder accountsList = new StringBuilder();
+        if (accountsMap.size() == 0) {
+            accountsList.append("\t%s\n".formatted(noneValue));
+        } else {
+            accountsMap.forEach(
+                    (key, value) -> accountsList.append("\t%s: %.2f\n".formatted(key, value))
             );
-        return sb.toString();
+        }
+
+        return accountsList.toString();
     }
 }

@@ -1,11 +1,13 @@
 package ru.netology.cardwork.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
 import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.VerificationFailureException;
+import ru.netology.cardwork.model.TransferAmount;
 import ru.netology.cardwork.providers.verification.VerificationProvider;
 import ru.netology.cardwork.repository.TransferSuitableRepository;
 import ru.netology.cardwork.providers.id.OperationIdProvider;
@@ -40,6 +42,9 @@ public class TransferService {
      */
     final private TransferSuitableRepository repository;
 
+    @Value("${commission}")
+    private double COMMISSION_RATE;
+
     public TransferService(OperationIdProvider operationIdProvider,
                            VerificationProvider verificationProvider,
                            TransferSuitableRepository repository) {
@@ -60,7 +65,7 @@ public class TransferService {
      */
     public OperationIdDto bidTransferRequest(Transfer request) {
         log.debug("TS received a request: {}", request);
-        repository.checkTransferPossibility(request);
+        repository.checkTransferPossibility(request, COMMISSION_RATE);
         verificationProvider
                 .performVerificationProcedure(request,
                         repository.getContactData(request.getCardFrom())
@@ -78,7 +83,7 @@ public class TransferService {
      * @return  a new OperationIdDto with the performed operation's ID. If something wrong, throws an exception.
      */
     public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {     // TODO: wrap in Response Entity
-        log.debug("TS received a confirmation: {}", confirmation);
+        log.debug("Transfer Service received a confirmation: {}", confirmation);
         String operationId = confirmation.getOperationId();
 
         if (!transfersInService.containsKey(operationId)) {
@@ -94,9 +99,12 @@ public class TransferService {
             throw new VerificationFailureException("Код подтверждения не соответствует.");
         }
 
-        repository.commitTransfer(dealToCommit);
+        repository.commitTransfer(dealToCommit, COMMISSION_RATE);
 
-        log.info("Transfer #{} committed: {}", operationId, dealToCommit);
+        TransferAmount transferAmount = dealToCommit.getTransferAmount();
+        log.info("Operation #{} complete: {}",
+                                    operationId,
+                                    dealToCommit);
         return new OperationIdDto(operationId);
     }
 }

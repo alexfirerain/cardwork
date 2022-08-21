@@ -21,7 +21,7 @@ public interface TransferSuitableRepository {
      * Checks whether offered properties in the transaction request meet the criteria.
      * @param request a Transfer object to be checked.
      */
-    void checkTransferPossibility(Transfer request) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
+    void checkTransferPossibility(Transfer request, double commissionRate) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
 
     /**
      * Executes a given transfer operation: subtracts a needed amount from a-account and adds it up to b-account
@@ -37,7 +37,7 @@ public interface TransferSuitableRepository {
      *                                              or any of two involved cards is not active somehow
      *                                              or don't have subaccounts in currency required.
      */
-    void commitTransfer(Transfer transferToCommit) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
+    void commitTransfer(Transfer transferToCommit, double commissionRate) throws CardNotFoundException, CardDataNotValidException, TransferNotPossibleException;
 
     /**
      * Reports contact data to get in touch with the card's owner.
