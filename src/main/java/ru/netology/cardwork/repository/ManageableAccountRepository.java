@@ -24,11 +24,33 @@ public interface ManageableAccountRepository {
      */
     void addAccount(Account account);
 
+    /**
+     * Adds an array of accounts to the repository.
+     * @param accounts  an array of accounts to add.
+     */
     void addAccounts(Account[] accounts);
 
+    /**
+     * Purges all accounts from the repository.
+     */
     void resetAccounts();
 
+    /**
+     * Removes an account associated with given card.
+     * @param card a card to delete the account associated with.
+     */
     void deleteAccount(Card card);
 
+    /**
+     * Bounds the account to a new card.
+     * @param oldAccount an account to be reassigned.
+     * @param newCard    a new card the account is to be bound to.
+     */
     void reassignAccountToCard(Account oldAccount, Card newCard);
+
+    /**
+     * Returns a string reporting the state of all accounts in the repository.
+     * @return a string representation of funds in currencies stored in the accounts in the repository.
+     */
+    String reportAccountsState();
 }

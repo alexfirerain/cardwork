@@ -23,6 +23,6 @@ public interface VerificationProvider {
      * @param codeReceived a given code to be compared.
      * @return {@code true} if given code is true, {@code false} otherwise.
      */
-    boolean validate(Transfer dealToCommit, String codeReceived);
+    boolean isValidCodeForOperation(Transfer dealToCommit, String codeReceived);
 
 }

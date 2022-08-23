@@ -260,6 +260,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         return Math.round(value * 100) / 100.;
     }
 
+    @Override
     public String reportAccountsState() {
         StringBuilder report = new StringBuilder("\n=== %s: ===\n".formatted(this.toString()));
 

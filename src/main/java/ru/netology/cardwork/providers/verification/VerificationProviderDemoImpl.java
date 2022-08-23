@@ -33,8 +33,8 @@ public class VerificationProviderDemoImpl implements VerificationProvider {
      * @return whether the code is right.
      */
     @Override
-    public boolean validate(Transfer dealToCommit,
-                            @NotBlank(message = "код подтверждения пуст") String codeReceived) {
+    public boolean isValidCodeForOperation(Transfer dealToCommit,
+                                           @NotBlank(message = "код подтверждения пуст") String codeReceived) {
         return CONSTANT.equals(codeReceived);
     }
 }

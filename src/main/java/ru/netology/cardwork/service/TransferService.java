@@ -43,7 +43,7 @@ public class TransferService {
     final private TransferSuitableRepository repository;
 
     @Value("${commission}")
-    private double COMMISSION_RATE;
+    private double COMMISSION_RATE;     // how to make it final? is it needed?
 
     public TransferService(OperationIdProvider operationIdProvider,
                            VerificationProvider verificationProvider,
@@ -93,7 +93,7 @@ public class TransferService {
 
         Transfer dealToCommit = transfersInService.remove(operationId);
 
-        if (!verificationProvider.validate(dealToCommit, confirmation.getCode())) {
+        if (!verificationProvider.isValidCodeForOperation(dealToCommit, confirmation.getCode())) {
             transfersInService.put(operationId, dealToCommit);
             log.warn("A code received does no match to the right one for operation#{}.", operationId);
             throw new VerificationFailureException("Код подтверждения не соответствует.");

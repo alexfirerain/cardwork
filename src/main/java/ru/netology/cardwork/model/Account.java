@@ -120,6 +120,13 @@ public class Account {
                                         listSubaccounts(currencySubaccounts, "нет"));
     }
 
+    /**
+     * Open method representing a <String, Double> map as a list of keys and values in form of a string.
+     * Can be used outside a concrete account object in other classes dealing with account-like objects.
+     * @param accountsMap a Map<String, Double> to be represented.
+     * @param noneValue   a string to be substituted when there's no entries in the map.
+     * @return  a string containing lines with keys & value or a specified empty value if the map is empty.
+     */
     public static String listSubaccounts(Map<String, Double> accountsMap, String noneValue) {
         StringBuilder accountsList = new StringBuilder();
         if (accountsMap.size() == 0) {
