@@ -27,7 +27,7 @@ public class TransferController {
 
     public TransferController(TransferService transferService) {
         this.transferService = transferService;
-        log.debug("A Transfer Controller initialized");
+        log.trace("A Transfer Controller initialized");
     }
 
     @PostMapping("/transfer")

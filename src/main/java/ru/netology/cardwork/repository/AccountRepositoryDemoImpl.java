@@ -123,9 +123,10 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
     }
 
     /**
-     * Validates possibility of such a transfer operation, checking if both cards are present,
-     * active and capable for required currency, if data of donor card are valid against the corresponding
-     * in the repository, and if this card holds enough funds to commit this transfer.
+     * Validates possibility of such a transfer operation, checking if the source card and target card are
+     * different and both cards are present, active and capable for required currency,
+     * if data of donor card are valid against the corresponding in the repository,
+     * and if this card holds enough funds to commit this transfer.
      * If any of conditions is not met, throws an exception.
      * @param request a Transfer object to be checked.
      */
@@ -134,19 +135,29 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
                                                                   CardDataNotValidException,
                                                                   TransferNotPossibleException {
         Card donorCard = request.getCardFrom();
-        String currency = request.getTransferAmount().getCurrency();
         validateCard(donorCard);
-        if (transferNotPossible(donorCard.getCardNumber(), currency) ||
-                transferNotPossible(request.getCardTo(), currency)) {
-            log.error("Some of the cards is not capable of such a transfer");
+
+        String donorNumber = donorCard.getCardNumber();
+        String recipientNumber = request.getCardTo();
+        if (donorNumber.equals(recipientNumber)) {
+            log.warn("Original and terminal cards should differ.");
+            throw new TransferNotPossibleException("Карта списания и получателя не может совпадать");
+        }
+
+        String currency = request.getTransferAmount().getCurrency();
+        if (transferNotPossible(donorNumber, currency) ||
+                transferNotPossible(recipientNumber, currency)) {
+            log.warn("Some of the cards is not capable of such a transfer");
             throw new TransferNotPossibleException("Перевод не может быть осуществлён");
         }
 
         double sumRequired = roundToCents(request.getTransferAmount().getValue() * (1 + commissionRate));
         if(sumRequired > howManyFundsHas(donorCard, currency)) {
-            log.error("There's not enough funds at the card#{} for such a transfer", donorCard.getCardNumber());
+            log.warn("There's not enough funds at the card#{} for such a transfer", donorNumber);
             throw new FundsInsufficientException("Не достаточно средств для осуществления перевода");
         }
+
+
     }
 
     @Override

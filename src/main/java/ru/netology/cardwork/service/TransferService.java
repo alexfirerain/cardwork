@@ -7,10 +7,9 @@ import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
 import ru.netology.cardwork.dto.Transfer;
 import ru.netology.cardwork.exception.VerificationFailureException;
-import ru.netology.cardwork.model.TransferAmount;
+import ru.netology.cardwork.providers.id.OperationIdProvider;
 import ru.netology.cardwork.providers.verification.VerificationProvider;
 import ru.netology.cardwork.repository.TransferSuitableRepository;
-import ru.netology.cardwork.providers.id.OperationIdProvider;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,9 +41,18 @@ public class TransferService {
      */
     final private TransferSuitableRepository repository;
 
+    /**
+     * A commission rate to be charged on transfers as a double value where 1.0 = 100%.
+      */
     @Value("${commission}")
     private double COMMISSION_RATE;     // how to make it final? is it needed?
 
+    /**
+     * Creates a new transfer service.
+     * @param operationIdProvider  a source of ID-sequence to be assigned for served operations.
+     * @param verificationProvider  an executor of verifications for transfer operations.
+     * @param repository            a repository storing data on accounts with funds.
+     */
     public TransferService(OperationIdProvider operationIdProvider,
                            VerificationProvider verificationProvider,
                            TransferSuitableRepository repository) {
@@ -101,7 +109,6 @@ public class TransferService {
 
         repository.commitTransfer(dealToCommit, COMMISSION_RATE);
 
-        TransferAmount transferAmount = dealToCommit.getTransferAmount();
         log.info("Operation #{} complete: {}",
                                     operationId,
                                     dealToCommit);

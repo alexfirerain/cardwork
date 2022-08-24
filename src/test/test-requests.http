@@ -1,9 +1,54 @@
-### a correct request
+### a correct request 1
 POST http://localhost:5500/transfer/transfer
 Content-Type: application/json
 
 {
   "cardFromNumber": "1234567812345678",
+  "cardFromValidTill": "03/25",
+  "cardFromCVV": "125",
+  "cardToNumber": "8765432187654321",
+  "amount": {
+    "value": 100,
+    "currency": "RUB"
+  }
+}
+
+### a correct request 2
+POST http://localhost:5500/transfer/transfer
+Content-Type: application/json
+
+{
+  "cardFromNumber": "1122334455667788",
+  "cardFromValidTill": "12/27",
+  "cardFromCVV": "A2M",
+  "cardToNumber": "1234567812345678",
+  "amount": {
+    "value": 1000,
+    "currency": "RUB"
+  }
+}
+
+### a correct request 2 with inactive recipient
+POST http://localhost:5500/transfer/transfer
+Content-Type: application/json
+
+{
+  "cardFromNumber": "1122334455667788",
+  "cardFromValidTill": "12/27",
+  "cardFromCVV": "A2M",
+  "cardToNumber": "8877665544332211",
+  "amount": {
+    "value": 1000,
+    "currency": "RUB"
+  }
+}
+
+### a correct request 2 with wrong card data
+POST http://localhost:5500/transfer/transfer
+Content-Type: application/json
+
+{
+  "cardFromNumber": "1122334455667788",
   "cardFromValidTill": "03/25",
   "cardFromCVV": "125",
   "cardToNumber": "8765432187654321",
@@ -82,7 +127,7 @@ Content-Type: application/json
 }
 
 
-### confirmation request
+### confirmation request for #0
 POST http://localhost:5500/transfer/confirmOperation
 Content-Type: application/json
 
@@ -90,3 +135,22 @@ Content-Type: application/json
   "operationId": "0",
   "code": "0000"
 }
+
+### confirmation request for #1
+POST http://localhost:5500/transfer/confirmOperation
+Content-Type: application/json
+
+{
+  "operationId": "1",
+  "code": "0000"
+}
+
+### confirmation request for #2
+POST http://localhost:5500/transfer/confirmOperation
+Content-Type: application/json
+
+{
+  "operationId": "2",
+  "code": "0000"
+}
+

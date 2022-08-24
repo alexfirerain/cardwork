@@ -1,5 +1,6 @@
 server:
   port: 5500
+
 logging:
   level:
     org.springframework: INFO
@@ -7,6 +8,7 @@ logging:
   pattern:
     console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
     file: "%d %p %c{1.} [%t] %m%n"
-  file.name: app.log
-  file.path: /log
+  file:
+    name: /log/cardwork.log
+
 commission: 0.01

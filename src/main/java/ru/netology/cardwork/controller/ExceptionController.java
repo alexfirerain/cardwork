@@ -46,7 +46,7 @@ public class ExceptionController {
         } else if (bad instanceof HttpMessageNotReadableException) {
             report = "неправильная структура запроса";
         }
-        log.info("Transfer attempt rejected because of inappropriate request: {}", report);
+        log.warn("Transfer attempt rejected because of inappropriate request: {}", report);
         return new ResponseEntity<>(new ErrorResponseDto("Ошибка в запросе: %s".formatted(report),
                 idCount.getAndIncrement()), HttpStatus.BAD_REQUEST);
     }
@@ -61,7 +61,7 @@ public class ExceptionController {
     @ExceptionHandler(TransferNotPossibleException.class)
     ResponseEntity<ErrorResponseDto> handleTransferError(TransferNotPossibleException tnpe) {
         log.debug("Caught an exception: {}", tnpe.getClass());
-        log.info("Transfer attempt rejected because of error: {}", tnpe.getLocalizedMessage());
+        log.warn("Transfer attempt rejected because of error: {}", tnpe.getLocalizedMessage());
         return new ResponseEntity<>(new ErrorResponseDto("Совершение перевода невозможно: %s".formatted(tnpe.getMessage()),
                                                 idCount.getAndIncrement()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -75,8 +75,8 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     ResponseEntity<ErrorResponseDto> handleServerError(Exception se) {
         log.debug("Caught an exception: {}", se.getClass());
-        log.info("Some error at the server: {}", se.getLocalizedMessage());
-        return new ResponseEntity<>(new ErrorResponseDto("Error at the server: %s".formatted(se.getMessage()),
+        log.warn("Some error at the server: {}", se.getLocalizedMessage());
+        return new ResponseEntity<>(new ErrorResponseDto("Что-то пошло не так: %s".formatted(se.getMessage()),
                                                 idCount.getAndIncrement()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
