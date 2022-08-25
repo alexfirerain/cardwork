@@ -257,7 +257,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
 
         if (!accounts.containsKey(cardNumber)) {
             log.error("Card #{} not found", cardNumber);
-            throw new CardNotFoundException("не найдено карты с  №" + cardNumber);
+            throw new CardNotFoundException("не найдено карты №" + cardNumber);
         }
 
         if (!card.equals(getCardByNumber(cardNumber))) {
