@@ -62,7 +62,7 @@ public class TransferService {
         transfersInService = new ConcurrentHashMap<>();
 //        COMMISSION_RATE = env.getProperty("${commission}");
 
-        log.debug("A Transfer Service initialized");
+        log.trace("A Transfer Service initialized");
     }
 
     /**
@@ -73,7 +73,7 @@ public class TransferService {
      * @return  an OperationIdDto object wrapping newly assigned operation id.
      */
     public OperationIdDto bidTransferRequest(Transfer request) {
-        log.debug("TS received a request: {}", request);
+        log.debug("Transfer Service received a request: {}", request);
         repository.checkTransferPossibility(request, COMMISSION_RATE);
         verificationProvider
                 .performVerificationProcedure(request,

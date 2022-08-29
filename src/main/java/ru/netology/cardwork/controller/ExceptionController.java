@@ -75,7 +75,7 @@ public class ExceptionController {
     @ExceptionHandler(Exception.class)
     ResponseEntity<ErrorResponseDto> handleServerError(Exception se) {
         log.debug("Caught an exception: {}", se.getClass());
-        log.warn("Some error at the server: {}", se.getLocalizedMessage());
+        log.error("Some error at the server: {}", se.getLocalizedMessage());
         return new ResponseEntity<>(new ErrorResponseDto("Что-то пошло не так: %s".formatted(se.getMessage()),
                                                 idCount.getAndIncrement()), HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -25,6 +25,7 @@ public class TransferController {
     public TransferController(TransferService transferService) {
         this.transferService = transferService;
         log.trace("A Transfer Controller initialized");
+//        log.info("Starting listening at localhost:{} for {}", "${server.port}", "${application.front-url}");
     }
 
     @PostMapping("/transfer")

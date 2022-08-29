@@ -9,8 +9,9 @@ logging:
     console: "%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"
     file: "%d %p %c{1.} [%t] %m%n"
   file:
-    name: /log/cardwork.log
+    name: ./log/cardwork.log
 
 application:
   commission: 0.01
-  front-url: "https://serp-ya.github.io"
+#  front-url: "https://serp-ya.github.io"
+  front-url: "http://localhost:3000"

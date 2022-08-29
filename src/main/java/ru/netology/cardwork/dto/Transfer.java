@@ -37,7 +37,7 @@ public class Transfer {
         this.cardTo = cardToNumber;
         this.transferAmount = amount;
 
-        log.debug("Transfer constructed: {}", this);
+        log.trace("Transfer constructed: {}", this);
     }
 
     @Override
