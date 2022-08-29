@@ -145,9 +145,9 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         }
 
         String currency = request.getTransferAmount().getCurrency();
-        String whyNot = transferNotPossible(donorNumber, currency);
-        if (whyNot != null) {
-            whyNot = transferNotPossible(recipientNumber, currency);
+        String whyNot = whyTransferImpossible(donorNumber, currency);
+        if (whyNot == null) {
+            whyNot = whyTransferImpossible(recipientNumber, currency);
         }
         if (whyNot != null) {
             log.warn("Some of the cards is not capable of such a transfer: {}", whyNot);
@@ -239,10 +239,9 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * None misc card data (whether is it expired etc.) are checked.
      * @param cardNumber a number of card in question.
      * @param currency   a name of currency in question.
-     * @return {@code true} if the account at this number is present,
-     * active and has ability for this currency. {@code false} otherwise.
+     * @return a string describing the problem which makes the transfer impossible.
      */
-    private String transferNotPossible(String cardNumber, String currency) {
+    private String whyTransferImpossible(String cardNumber, String currency) {
         Account account = accounts.get(cardNumber);
         if (account == null)
             return "Карты №%s не найдено.".formatted(cardNumber);
