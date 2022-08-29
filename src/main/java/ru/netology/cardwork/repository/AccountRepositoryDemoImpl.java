@@ -41,14 +41,14 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
 
     /**
      * Puts a Card object to the repository as a new active Account, assuming contactData
-     * to be an empty string. Assigns to it a new empty account in "RUB" currency.
+     * to be an empty string. Assigns to it a new empty account in "RUR" currency.
      * @param cardAdding a card to be inserted into the base.
      */
     @Override
     public void addDefaultAccount(Card cardAdding) {
         addAccount(
                 (new Account(cardAdding))
-                        .addCurrencySubaccount("RUB", 0.)
+                        .addCurrencySubaccount("RUR", 0.)
         );
     }
 

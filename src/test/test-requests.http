@@ -9,7 +9,7 @@ Content-Type: application/json
   "cardToNumber": "8765432187654321",
   "amount": {
     "value": 100,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 
@@ -24,7 +24,7 @@ Content-Type: application/json
   "cardToNumber": "1234567812345678",
   "amount": {
     "value": 1000,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 
@@ -39,7 +39,7 @@ Content-Type: application/json
   "cardToNumber": "8877665544332211",
   "amount": {
     "value": 1000,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 
@@ -54,7 +54,7 @@ Content-Type: application/json
   "cardToNumber": "8765432187654321",
   "amount": {
     "value": 100,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 
@@ -69,7 +69,7 @@ Content-Type: application/json
   "cardToNumber": "8765432187654321",
   "amount": {
     "value": 100,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 
@@ -84,7 +84,7 @@ Content-Type: application/json
   "cardToNumber": "8765432187654321",
   "amount": {
     "value": 100,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 
@@ -99,7 +99,7 @@ Content-Type: application/json
   "cardToNumber": "8765432187654321",
   "amount": {
     "value": 100,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 
@@ -114,7 +114,7 @@ Content-Type: application/json
   "cardToNumber": "8765432187654321",
   "amount": {
     "value": 100,
-    "currency": "RUB"
+    "currency": "RUR"
   }
 }
 

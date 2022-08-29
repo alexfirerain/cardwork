@@ -15,7 +15,7 @@ public class RequestTest {
     @Autowired
     private TransferController transferController;
     @Test
-    public void controller_present() throws Exception {
+    public void controller_present() {
         assertThat(transferController).isNotNull();
     }
 }
