@@ -49,7 +49,7 @@ public class Card {
         }
         this.cardCVV = cardCVV;
 
-        log.debug("Card constructed: {}", this);
+        log.trace("Card constructed: {}", this);
     }
 
     @Override

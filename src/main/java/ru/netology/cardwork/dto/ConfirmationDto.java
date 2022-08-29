@@ -21,7 +21,7 @@ public class ConfirmationDto {
     public ConfirmationDto(String operationId, String code) {
         this.operationId = operationId;
         this.code = code;
-        log.debug("a confirmation object built: {}", this);
+        log.trace("a confirmation object built: {}", this);
     }
 
     @Override

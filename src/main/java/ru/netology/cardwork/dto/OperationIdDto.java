@@ -16,7 +16,7 @@ public class OperationIdDto {
 
     public OperationIdDto(String operationId) {
         this.operationId = operationId;
-        log.debug("OperationId generated: {}", this);
+        log.trace("OperationId generated: {}", this);
     }
 
     @Override

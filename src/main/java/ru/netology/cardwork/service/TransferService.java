@@ -44,7 +44,7 @@ public class TransferService {
     /**
      * A commission rate to be charged on transfers as a double value where 1.0 = 100%.
       */
-    @Value("${commission}")
+    @Value("${application.commission}")
     private double COMMISSION_RATE;     // how to make it final? is it needed?
 
     /**
@@ -60,6 +60,7 @@ public class TransferService {
         this.verificationProvider = verificationProvider;
         this.repository = repository;
         transfersInService = new ConcurrentHashMap<>();
+//        COMMISSION_RATE = env.getProperty("${commission}");
 
         log.debug("A Transfer Service initialized");
     }

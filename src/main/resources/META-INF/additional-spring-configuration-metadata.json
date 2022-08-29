@@ -1,8 +1,0 @@
-{
-  "properties": [
-    {
-      "name": "commission",
-      "type": "java.lang.Double",
-      "description": "Commission rate to be deduced on transfers."
-  }
-] }

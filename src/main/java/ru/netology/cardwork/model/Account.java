@@ -36,11 +36,11 @@ public class Account {
      * and value in Integer as a value.
      * Using integer values is as queer applicable for financials as required in this task.
      */
-    private final Map<String, Double> currencySubaccounts = new ConcurrentHashMap<>();
+    private final Map<String, Integer> currencySubaccounts = new ConcurrentHashMap<>();
 
     public Account(Card cardAdding) {
         this(cardAdding,  "", true);
-        log.debug("Account constructed: {}", this);
+        log.trace("Account constructed: {}", this);
     }
 
     public String getCardNumber() {
@@ -72,28 +72,28 @@ public class Account {
     public boolean noSuchCurrency(String currency) {
         return !currencySubaccounts.containsKey(currency);
     }
-    public double fundsOnAccount(String currency) {
+    public int fundsOnAccount(String currency) {
         if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         return currencySubaccounts.get(currency);
     }
-    public Account addCurrencySubaccount(String currency, double value) {
+    public Account addCurrencySubaccount(String currency, int value) {
         currencySubaccounts.put(currency, value);
         return this;
     }
 
     public Account addCurrencySubaccount(String currency) {
-        currencySubaccounts.put(currency, 0.);
+        currencySubaccounts.put(currency, 0);
         return this;
     }
 
-    public double addFunds(String currency, double value) {
+    public double addFunds(String currency, int value) {
         if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         currencySubaccounts.put(currency, currencySubaccounts.get(currency) + value);
         return currencySubaccounts.get(currency);
     }
-    public double subtractFunds(String currency, double value) {
+    public double subtractFunds(String currency, int value) {
         if (noSuchCurrency(currency)) throwIAEofNoCurrency();
 
         // the card is ABLE of keeping negative accounts, so no checking for negative values needed
@@ -127,13 +127,13 @@ public class Account {
      * @param noneValue   a string to be substituted when there's no entries in the map.
      * @return  a string containing lines with keys & value or a specified empty value if the map is empty.
      */
-    public static String listSubaccounts(Map<String, Double> accountsMap, String noneValue) {
+    public static String listSubaccounts(Map<String, Integer> accountsMap, String noneValue) {
         StringBuilder accountsList = new StringBuilder();
         if (accountsMap.size() == 0) {
             accountsList.append("\t%s\n".formatted(noneValue));
         } else {
             accountsMap.forEach(
-                    (key, value) -> accountsList.append("\t%s: %.2f\n".formatted(key, value))
+                    (key, value) -> accountsList.append("\t%s: %.2f\n".formatted(key, value / 100.))
             );
         }
 

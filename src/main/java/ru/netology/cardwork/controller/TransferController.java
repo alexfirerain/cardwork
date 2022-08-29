@@ -14,7 +14,7 @@ import javax.validation.Valid;
  */
 @Slf4j
 @RestController
-//@RequestMapping("/transfer")
+@CrossOrigin(origins = "${application.front-url}")
 public class TransferController {
 
     /**
@@ -28,14 +28,12 @@ public class TransferController {
     }
 
     @PostMapping("/transfer")
-    @CrossOrigin(origins = "http://localhost:3000")
     public OperationIdDto acceptTransferRequest(@RequestBody @Valid Transfer request) {
         log.info("a request received: {}", request);
         return transferService.bidTransferRequest(request);
     }
 
     @PostMapping("/confirmOperation")
-    @CrossOrigin(origins = "http://localhost:3000")
     public OperationIdDto confirmTransferRequest(@RequestBody @Valid ConfirmationDto confirmation) {
         log.info("a confirmation received: {}", confirmation);
         return transferService.commitTransferRequest(confirmation);

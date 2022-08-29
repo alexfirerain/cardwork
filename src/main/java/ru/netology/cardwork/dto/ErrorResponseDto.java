@@ -21,7 +21,7 @@ public class ErrorResponseDto {
     public ErrorResponseDto(String message, Integer id) {
         this.message = message;
         this.id = id;
-        log.debug("error response generated: {}", this);
+        log.trace("error response generated: {}", this);
     }
 
     @Override

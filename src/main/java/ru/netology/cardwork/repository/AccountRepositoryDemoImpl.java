@@ -28,7 +28,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      */
     private final Map<String, Account> accounts = new ConcurrentHashMap<>();
 
-    private final Map<String, Double> commissionAccount = new ConcurrentHashMap<>();
+    private final Map<String, Integer> commissionAccount = new ConcurrentHashMap<>();
 
     public AccountRepositoryDemoImpl() {
         // TODO: как это кошернее всего реализовать для тестового профиля?
@@ -48,7 +48,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
     public void addDefaultAccount(Card cardAdding) {
         addAccount(
                 (new Account(cardAdding))
-                        .addCurrencySubaccount("RUR", 0.)
+                        .addCurrencySubaccount("RUR", 0)
         );
     }
 
@@ -63,7 +63,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
             log.warn("Card #{} already in da base, will be rewritten", cardNumber);
         }
         accounts.put(account.getCardNumber(), account);
-        log.info("Have account @cardNumber {} written to the base", cardNumber);
+        log.info("Have account written to the base: {}", account);
     }
 
     @Override
@@ -101,7 +101,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * @throws CardNotFoundException     if there's no such a card in the repository.
      * @throws CardDataNotValidException if any of card data is not the same as in one in the repository.
      */
-    private double howManyFundsHas(Card card,
+    private int howManyFundsHas(Card card,
                                    String currency) throws CardNotFoundException,
                                                            CardDataNotValidException,
                                                            IllegalArgumentException {
@@ -145,16 +145,19 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         }
 
         String currency = request.getTransferAmount().getCurrency();
-        if (transferNotPossible(donorNumber, currency) ||
-                transferNotPossible(recipientNumber, currency)) {
-            log.warn("Some of the cards is not capable of such a transfer");
-            throw new TransferNotPossibleException("Перевод не может быть осуществлён");
+        String whyNot = transferNotPossible(donorNumber, currency);
+        if (whyNot != null) {
+            whyNot = transferNotPossible(recipientNumber, currency);
+        }
+        if (whyNot != null) {
+            log.warn("Some of the cards is not capable of such a transfer: {}", whyNot);
+            throw new TransferNotPossibleException("Перевод невозможен: " + whyNot);
         }
 
-        double sumRequired = roundToCents(request.getTransferAmount().getValue() * (1 + commissionRate));
+        int sumRequired = (int) Math.round(request.getTransferAmount().getValue() * (1 + commissionRate));
         if(sumRequired > howManyFundsHas(donorCard, currency)) {
             log.warn("There's not enough funds at the card#{} for such a transfer", donorNumber);
-            throw new FundsInsufficientException("Не достаточно средств для осуществления перевода");
+            throw new FundsInsufficientException("Не достаточно средств.");
         }
 
 
@@ -167,24 +170,24 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         // transaction imitation
         Card donorCard = transferToCommit.getCardFrom();
         Card acceptorCard = getCardByNumber(transferToCommit.getCardTo());
-        double amount = (double) transferToCommit.getTransferAmount().getValue();
-        double commission = roundToCents(amount * commissionRate);
+        int amount = transferToCommit.getTransferAmount().getValue();
+        int commissionAmount = (int) Math.round(amount * commissionRate);
         String currency = transferToCommit.getTransferAmount().getCurrency();
         Account donorAccount = getAccountByCard(donorCard);
         Account acceptorAccount = getAccountByCard(acceptorCard);
 
-        double oldDonorValue = howManyFundsHas(donorCard, currency);
-        double oldAcceptorValue = howManyFundsHas(acceptorCard, currency);
-        double oldCommissionAccountValue = commissionAccount.get(currency) == null ?
+        int oldDonorValue = howManyFundsHas(donorCard, currency);
+        int oldAcceptorValue = howManyFundsHas(acceptorCard, currency);
+        int oldCommissionAccountValue = commissionAccount.get(currency) == null ?
                                             0 : commissionAccount.get(currency);
 
-        donorAccount.subtractFunds(currency, amount + commission);
+        donorAccount.subtractFunds(currency, amount + commissionAmount);
         acceptorAccount.addFunds(currency, amount);
-        commissionAccount.merge(currency, commission, Double::sum);
+        commissionAccount.merge(currency, commissionAmount, Integer::sum);
 
-        if (oldDonorValue - amount - commission != howManyFundsHas(donorCard, currency) ||
+        if (oldDonorValue - amount - commissionAmount != howManyFundsHas(donorCard, currency) ||
                 oldAcceptorValue + amount != howManyFundsHas(acceptorCard, currency) ||
-                oldCommissionAccountValue + commission != commissionAccount.get(currency))
+                oldCommissionAccountValue + commissionAmount != commissionAccount.get(currency))
         {
             donorAccount.getCurrencySubaccounts().put(currency, oldDonorValue);
             acceptorAccount.getCurrencySubaccounts().put(currency, oldAcceptorValue);
@@ -195,7 +198,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
 
         log.info("{} committed (commission: {})",
                                     transferToCommit,
-                                    "%.2f %s".formatted(commission, currency));
+                                    "%.2f %s".formatted(commissionAmount / 100., currency));
         log.debug(reportAccountsState());
     }
 
@@ -239,11 +242,15 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * @return {@code true} if the account at this number is present,
      * active and has ability for this currency. {@code false} otherwise.
      */
-    private boolean transferNotPossible(String cardNumber, String currency) {
+    private String transferNotPossible(String cardNumber, String currency) {
         Account account = accounts.get(cardNumber);
-        return account == null
-                || !account.isActive()
-                || account.noSuchCurrency(currency);
+        if (account == null)
+            return "Карты №%s не найдено.".formatted(cardNumber);
+        if (!account.isActive())
+            return "Счёт карты №%s не активен.".formatted(cardNumber);
+        if (account.noSuchCurrency(currency))
+            return "Счёт в %s отсутствует на карте №%s".formatted(currency, cardNumber);
+        return null;
     }
 
     /**
@@ -265,10 +272,6 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
             throw new CardDataNotValidException("Данные карты №" + cardNumber + " не соответствуют. К сожалению.");
         }
 
-    }
-
-    private double roundToCents(double value) {
-        return Math.round(value * 100) / 100.;
     }
 
     @Override

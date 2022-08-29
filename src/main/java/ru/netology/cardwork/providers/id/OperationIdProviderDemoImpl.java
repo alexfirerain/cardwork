@@ -22,7 +22,7 @@ public class OperationIdProviderDemoImpl implements OperationIdProvider {
     public String serveAnOperationId() {
 
         Long next = idCount.getAndIncrement();
-        log.debug("served an ID: {}", next);
+        log.trace("served an ID: {}", next);
 
         return String.valueOf(next);
     }

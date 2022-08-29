@@ -11,4 +11,6 @@ logging:
   file:
     name: /log/cardwork.log
 
-commission: 0.01
+application:
+  commission: 0.01
+  front-url: "https://serp-ya.github.io"

@@ -31,11 +31,11 @@ public class TransferAmount {
         this.value = value;
         this.currency = currency;
 
-        log.debug("TransferAmount constructed: {}", this);
+        log.trace("TransferAmount constructed: {}", this);
     }
 
     @Override
     public String toString() {
-        return "%s %s".formatted(value.toString(), currency);
+        return "%.2f %s".formatted(value / 100., currency);
     }
 }
