@@ -40,6 +40,19 @@ public class Transfer {
         log.trace("Transfer constructed: {}", this);
     }
 
+    public Transfer(String cardFromNumber,
+                    String cardFromValidTill,
+                    String cardFromCVV,
+                    String cardToNumber,
+                    int amount,
+                    String currency) {
+        this(cardFromNumber,
+                cardFromValidTill,
+                cardFromCVV,
+                cardToNumber,
+                new TransferAmount(amount, currency));
+    }
+
     @Override
     public String toString() {
         return "Transfer {%s} #%s → #%s"
