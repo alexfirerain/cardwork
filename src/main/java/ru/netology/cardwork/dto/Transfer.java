@@ -53,6 +53,15 @@ public class Transfer {
                 new TransferAmount(amount, currency));
     }
 
+    public Transfer(Card cardFrom,
+                    Card cardTo,
+                    int transferAmount,
+                    String currency) {
+        this.cardFrom = cardFrom;
+        this.cardTo = cardTo.getCardNumber();
+        this.transferAmount = new TransferAmount(transferAmount, currency);
+    }
+
     @Override
     public String toString() {
         return "Transfer {%s} #%s → #%s"
