@@ -41,6 +41,9 @@ class TransferControllerTest {
 
     @BeforeEach
     void setUp() {
+        Mockito
+            .when(transferService.bidTransferRequest(TRANSFER_1))
+            .thenReturn(new OperationIdDto("0"));
     }
 
     @Test
@@ -50,9 +53,7 @@ class TransferControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(TRANSFER_1));
 
-        Mockito
-                .when(transferService.bidTransferRequest(TRANSFER_1))
-                .thenReturn(new OperationIdDto("0"));
+
 
         mockMvc.perform(mockRequest)
                 .andExpect(status().isOk())
