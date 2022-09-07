@@ -1,6 +1,7 @@
 package ru.netology.cardwork.dto;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.netology.cardwork.model.Card;
 import ru.netology.cardwork.model.TransferAmount;
@@ -17,14 +18,15 @@ import javax.validation.constraints.Pattern;
  */
 @Getter
 @Slf4j
+@NoArgsConstructor
 public class Transfer {
     @Valid
-    private final Card cardFrom;
+    private Card cardFrom;
     @NotBlank
     @Pattern(regexp = "\\d{16,}", message = "номер карты по меньшей мере 16 цифр")
-    private final String cardTo;
+    private String cardTo;
     @Valid
-    private final TransferAmount transferAmount;
+    private TransferAmount transferAmount;
 
     public Transfer(String cardFromNumber,
                     String cardFromValidTill,

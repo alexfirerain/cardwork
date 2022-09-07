@@ -50,7 +50,9 @@ class TransferControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .content(this.mapper.writeValueAsString(TRANSFER_1));
 
-        Mockito.when(transferService.bidTransferRequest(TRANSFER_1)).thenReturn(new OperationIdDto("0"));
+        Mockito
+                .when(transferService.bidTransferRequest(TRANSFER_1))
+                .thenReturn(new OperationIdDto("0"));
 
         mockMvc.perform(mockRequest)
                 .andExpect(status().isOk())
@@ -71,7 +73,7 @@ class TransferControllerTest {
 //                .andExpect(result ->
 //                        assertTrue(result.getResolvedException() instanceof CardNotFoundException))
 //                .andExpect(result ->
-//                        assertEquals("PatientRecord or ID must not be null!", result.getResolvedException().getMessage()));
+//                        assertEquals("", result.getResolvedException().getMessage()));
 //
 //    }
 
