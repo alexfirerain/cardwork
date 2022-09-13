@@ -53,15 +53,16 @@ public class Transfer {
                 cardFromCVV,
                 cardToNumber,
                 new TransferAmount(amount, currency));
+        log.trace("Transfer constructed: {}", this);
     }
 
     public Transfer(Card cardFrom,
                     Card cardTo,
-                    int transferAmount,
-                    String currency) {
+                    int transferAmount) {
         this.cardFrom = cardFrom;
         this.cardTo = cardTo.getCardNumber();
-        this.transferAmount = new TransferAmount(transferAmount, currency);
+        this.transferAmount = new TransferAmount(transferAmount, "RUR");
+        log.trace("Transfer constructed: {}", this);
     }
 
     @Override

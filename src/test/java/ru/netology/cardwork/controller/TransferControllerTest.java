@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -26,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.netology.cardwork.repository.DemoData.*;
 
+//@RunWith(SpringRunner.class)
 @WebMvcTest(TransferController.class)
 class TransferControllerTest {
 
@@ -34,10 +37,13 @@ class TransferControllerTest {
     @Autowired
     ObjectMapper mapper;
 
+//    @Autowired
+//    TransferController transferController;
+
     @MockBean
     TransferService transferService;
 
-    Transfer TRANSFER_1 = new Transfer(CARD_1, CARD_2, 500, "RUR");
+    Transfer TRANSFER_1 = new Transfer(CARD_1, CARD_2, 500);
 
     @BeforeEach
     void setUp() {
