@@ -3,6 +3,7 @@ package ru.netology.cardwork.dto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.netology.cardwork.model.Card;
 import ru.netology.cardwork.model.TransferAmount;
 
@@ -39,7 +40,7 @@ public class Transfer {
         this.cardTo = cardToNumber;
         this.transferAmount = amount;
 
-        log.trace("Transfer constructed: {}", this);
+        log.trace("Transfer constructed via String-String-String-TransferAmount: {}", this);
     }
 
     public Transfer(String cardFromNumber,
@@ -53,7 +54,7 @@ public class Transfer {
                 cardFromCVV,
                 cardToNumber,
                 new TransferAmount(amount, currency));
-        log.trace("Transfer constructed: {}", this);
+        log.trace("Transfer constructed via String-String-String-int-String: {}", this);
     }
 
     public Transfer(Card cardFrom,
@@ -62,7 +63,7 @@ public class Transfer {
         this.cardFrom = cardFrom;
         this.cardTo = cardTo.getCardNumber();
         this.transferAmount = new TransferAmount(transferAmount, "RUR");
-        log.trace("Transfer constructed: {}", this);
+        log.trace("Transfer constructed via Card-Card-int: {}", this);
     }
 
     @Override

@@ -34,22 +34,22 @@ public class TransferControllerIntegrationTest {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
-    @Test
-    public void givenWac_whenServletContext_thenItProvidesTransferService() {
-        ServletContext servletContext = webApplicationContext.getServletContext();
-
-        Assert.assertNotNull(servletContext);
-        Assert.assertTrue(servletContext instanceof MockServletContext);
-        Assert.assertNotNull(webApplicationContext.getBean("transferService"));
-    }
-
-    @Test
-    public void givenTransferURIWithPost_whenMockMVC_thenVerifyResponse() throws Exception {
-        this.mockMvc.perform(post("/transfer")).andDo(print())
-                       .andExpect(status().isOk())
-                       .andExpect(content().contentType("application/json;charset=UTF-8"))
-                       .andExpect(jsonPath("$.operationId").value("0"));
-    }
+//    @Test
+//    public void givenWac_whenServletContext_thenItProvidesTransferService() {
+//        ServletContext servletContext = webApplicationContext.getServletContext();
+//
+//        Assert.assertNotNull(servletContext);
+//        Assert.assertTrue(servletContext instanceof MockServletContext);
+//        Assert.assertNotNull(webApplicationContext.getBean("transferService"));
+//    }
+//
+//    @Test
+//    public void givenTransferURIWithPost_whenMockMVC_thenVerifyResponse() throws Exception {
+//        this.mockMvc.perform(post("/transfer")).andDo(print())
+//                       .andExpect(status().isOk())
+//                       .andExpect(content().contentType("application/json;charset=UTF-8"))
+//                       .andExpect(jsonPath("$.operationId").value("0"));
+//    }
 
 
 }

@@ -37,8 +37,8 @@ class TransferControllerTest {
     @Autowired
     ObjectMapper mapper;
 
-//    @Autowired
-//    TransferController transferController;
+    @Autowired
+    TransferController transferController;
 
     @MockBean
     TransferService transferService;
@@ -52,21 +52,21 @@ class TransferControllerTest {
             .thenReturn(new OperationIdDto("0"));
     }
 
-    @Test
-    void request_accepts() throws Exception {
-        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/transfer")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(this.mapper.writeValueAsString(TRANSFER_1));
-
-
-
-        mockMvc.perform(mockRequest)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", notNullValue()))
-                .andExpect(jsonPath("$.operationId", is("0")));
-
-    }
+//    @Test
+//    void request_accepts() throws Exception {
+//        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/transfer")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .accept(MediaType.APPLICATION_JSON)
+//                .content(this.mapper.writeValueAsString(TRANSFER_1));
+//
+//
+//
+//        mockMvc.perform(mockRequest)
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$", notNullValue()))
+//                .andExpect(jsonPath("$.operationId", is("0")));
+//
+//    }
 
 //    @Test
 //    void requestFails_ifCardNotFound() throws Exception {
@@ -84,7 +84,7 @@ class TransferControllerTest {
 //
 //    }
 
-    @Test
-    void confirmTransferRequest() {
-    }
+//    @Test
+//    void confirmTransferRequest() {
+//    }
 }
