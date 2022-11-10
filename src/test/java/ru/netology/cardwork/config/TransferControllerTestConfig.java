@@ -8,10 +8,10 @@ import ru.netology.cardwork.service.TransferService;
 @Configuration
 public class TransferControllerTestConfig {
 
-    @Bean
-    public TransferService transferService()
-    {
-        return Mockito.mock(TransferService.class);
-    }
+//    @Bean
+//    public TransferService transferService()
+//    {
+//        return Mockito.mock(TransferService.class);
+//    }
 
 }
