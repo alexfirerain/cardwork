@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class RequestTest {
+public class ControllerTest {
     @Autowired
     private TransferController transferController;
     @Test
