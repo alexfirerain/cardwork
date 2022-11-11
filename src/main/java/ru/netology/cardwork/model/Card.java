@@ -29,6 +29,8 @@ public class Card {
     @Size(min = 3, message = "в CVV не меньше трёх символов")
     private String cardCVV;
 
+    static private final SimpleDateFormat MONTH_YEAR_FORMATTER = new SimpleDateFormat("MM/yy");
+
     /**
      * A model object representation of a bank Card defined by three strings.
      * @param cardNumber    the card's unique id number.
@@ -39,10 +41,10 @@ public class Card {
     public Card(String cardNumber,
                 String validTill,
                 String cardCVV) {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("MM/yy");
+
         this.cardNumber = cardNumber;
         try {
-            this.validTill = dateFormatter.parse(validTill);
+            this.validTill = MONTH_YEAR_FORMATTER.parse(validTill);
         } catch (ParseException e) {
             log.warn("the date pattern not recognized, a zero date is set to card#{}", cardNumber);
             this.validTill = new Date(0L);
@@ -56,5 +58,9 @@ public class Card {
     public String toString() {
         return "Card #%s (valid till %s, CVV %s)"
                 .formatted(cardNumber, validTill, cardCVV);
+    }
+
+    public String getValidTillString() {
+        return MONTH_YEAR_FORMATTER.format(validTill);
     }
 }

@@ -40,6 +40,31 @@ public class Transfer {
         log.trace("Transfer constructed: {}", this);
     }
 
+    public static Transfer fromSeparateArguments(String cardFromNumber,
+                                                String cardFromValidTill,
+                                                String cardFromCVV,
+                                                String cardToNumber,
+                                                int amount,
+                                                String currency) {
+        return new Transfer(cardFromNumber,
+                            cardFromValidTill,
+                            cardFromCVV,
+                            cardToNumber,
+                            new TransferAmount(amount, currency));
+    }
+
+    public static Transfer forDemoData(Card cardFrom,
+                                        Card cardTo,
+                                        int transferAmount) {
+        return new Transfer(cardFrom.getCardNumber(),
+                            cardFrom.getValidTillString(),
+                            cardFrom.getCardCVV(),
+                            cardTo.getCardNumber(),
+                            new TransferAmount(transferAmount, "RUR"));
+    }
+
+
+
     @Override
     public String toString() {
         return "Transfer {%s} #%s → #%s"
