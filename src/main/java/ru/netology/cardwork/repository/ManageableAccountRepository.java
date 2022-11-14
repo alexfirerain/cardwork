@@ -11,7 +11,7 @@ import ru.netology.cardwork.model.Card;
 public interface ManageableAccountRepository {
     /**
      * Puts a Card object to the repository as a new active Account, assuming contactData
-     * to be an empty string. Assigns to it a new empty account in "RUB" currency.
+     * to be an empty string. Assigns to it a new empty account in "RUR" currency.
      *
      * @param cardAdding a card to be inserted into the base.
      */

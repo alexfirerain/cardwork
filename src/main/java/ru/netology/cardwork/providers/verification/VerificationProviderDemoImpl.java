@@ -2,7 +2,7 @@ package ru.netology.cardwork.providers.verification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.netology.cardwork.dto.Transfer;
+import ru.netology.cardwork.model.Transfer;
 
 import javax.validation.constraints.NotBlank;
 

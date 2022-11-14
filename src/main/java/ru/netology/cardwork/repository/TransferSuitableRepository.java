@@ -1,6 +1,6 @@
 package ru.netology.cardwork.repository;
 
-import ru.netology.cardwork.dto.Transfer;
+import ru.netology.cardwork.model.Transfer;
 import ru.netology.cardwork.exception.CardDataNotValidException;
 import ru.netology.cardwork.exception.CardNotFoundException;
 import ru.netology.cardwork.exception.TransferNotPossibleException;

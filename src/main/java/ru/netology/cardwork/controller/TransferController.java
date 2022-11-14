@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
-import ru.netology.cardwork.dto.Transfer;
+import ru.netology.cardwork.model.Transfer;
 import ru.netology.cardwork.service.TransferService;
 
 import javax.validation.Valid;
@@ -47,7 +47,7 @@ public class TransferController {
      * and returning a wrapped in a OperationIdDto object string of OperationId
      * of the corresponding performed transaction.
      * @param confirmation a confirmation object to apply to the pending operation.
-     * @return the ID for confirmed transfer request.
+     * @return the ID for confirmed transfer request returned by the Service.
      */
     @PostMapping("/confirmOperation")
     public OperationIdDto confirmTransferRequest(@RequestBody @Valid ConfirmationDto confirmation) {

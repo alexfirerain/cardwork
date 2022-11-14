@@ -1,9 +1,7 @@
-package ru.netology.cardwork.dto;
+package ru.netology.cardwork.model;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import ru.netology.cardwork.model.Card;
-import ru.netology.cardwork.model.TransferAmount;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;

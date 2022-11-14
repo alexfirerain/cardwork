@@ -1,6 +1,6 @@
 package ru.netology.cardwork.providers.verification;
 
-import ru.netology.cardwork.dto.Transfer;
+import ru.netology.cardwork.model.Transfer;
 import ru.netology.cardwork.exception.VerificationFailureException;
 
 /**
