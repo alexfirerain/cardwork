@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Data to be sent as an offer to confirm the transfer
+ * Identifier of the transaction assigned by the Service
+ * and being used for addressing to that transaction while exchanging with messages
+ * between the Back and the Front during obtaining confirmation.
  */
 @Getter
 @Slf4j

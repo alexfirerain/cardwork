@@ -11,28 +11,51 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * A model object representation of a bank card
+ * which serves as a key when storing accounts.
+ * Contains a card number (as string), a date this card is valid till
+ * (interconvertible with a corresponding string of the MM/YY form)
+ * and a so-called card CVV (one more string).
+ */
 @Getter
 @EqualsAndHashCode
 @NoArgsConstructor
 @Slf4j
 @Validated
 public class Card {
+
+    /**
+     * A string corresponding to the card's number.
+     */
     @NotBlank(message = "номер карты не должен быть пустым")
     @Pattern(regexp = "\\d{16,}", message = "номер карты по меньшей мере 16 цифр")
     private String cardNumber;
 
+    /**
+     * A month and a year this card is valid till (stored as a date
+     * but can be set or presented as a string in a MM/YY pattern).
+     * In current implementation, the stored month means the first month
+     * when the card is NOT valid anymore. If you want the month
+     * to be understood as inclusive, the implementation is to be changed.
+     */
     @NotNull(message = "должен быть указан срок действия")
     @Future(message = "карта просрочена")
     private Date validTill;
 
-    @NotBlank(message = "CVV не должно быть пустым")
+    /**
+     * A special 'Card Verification Value', an additional string to identify the card.
+     * This is a number encrypted in the magnetic strip of cards
+     * of the Visa international payment system and here in model.
+     */
+    @NotBlank(message = "CVV не бывает пустым")
     @Size(min = 3, message = "в CVV не меньше трёх символов")
     private String cardCVV;
 
     static private final SimpleDateFormat MONTH_YEAR_FORMATTER = new SimpleDateFormat("MM/yy");
 
     /**
-     * A model object representation of a bank Card defined by three strings.
+     * A definition of a bank Card via three strings.
      * @param cardNumber    the card's unique id number.
      * @param validTill     month and year in future when the card expires.
      *                      If the pattern received not recognized, the zero-date is set.
@@ -57,7 +80,7 @@ public class Card {
     @Override
     public String toString() {
         return "Card #%s (valid till %s, CVV %s)"
-                .formatted(cardNumber, validTill, cardCVV);
+                .formatted(cardNumber, getValidTillString(), cardCVV);
     }
 
     public String getValidTillString() {
