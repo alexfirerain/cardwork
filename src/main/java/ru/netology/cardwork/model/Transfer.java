@@ -16,11 +16,20 @@ import javax.validation.constraints.Pattern;
 @Getter
 @Slf4j
 public class Transfer {
+    /**
+     * A model of the sender's card.
+     */
     @Valid
     private final Card cardFrom;
+    /**
+     *  A number of the card to transfer funds to.
+     */
     @NotBlank
     @Pattern(regexp = "\\d{16,}", message = "номер карты по меньшей мере 16 цифр")
     private final String cardTo;
+    /**
+     * A presentation of the matter to be transferred consisting of amount and currency.
+     */
     @Valid
     private final TransferAmount transferAmount;
 

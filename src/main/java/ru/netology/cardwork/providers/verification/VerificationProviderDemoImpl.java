@@ -6,6 +6,11 @@ import ru.netology.cardwork.model.Transfer;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * A simple implementation of the Verification Provider.
+ * It holds a known string constant and reports OK
+ * when the code to be verified coincides with it.
+ */
 @Component
 @Slf4j
 public class VerificationProviderDemoImpl implements VerificationProvider {

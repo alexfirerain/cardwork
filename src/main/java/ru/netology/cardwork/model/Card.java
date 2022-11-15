@@ -52,6 +52,9 @@ public class Card {
     @Size(min = 3, message = "в CVV не меньше трёх символов")
     private String cardCVV;
 
+    /**
+     * An internal transformer of date to be represented either a Date or a String object.
+     */
     static private final SimpleDateFormat MONTH_YEAR_FORMATTER = new SimpleDateFormat("MM/yy");
 
     /**
@@ -83,6 +86,10 @@ public class Card {
                 .formatted(cardNumber, getValidTillString(), cardCVV);
     }
 
+    /**
+     * A getter to present the expiration date as a 'MM/YY' string.
+     * @return a string representation of month and year of card's being valid.
+     */
     public String getValidTillString() {
         return MONTH_YEAR_FORMATTER.format(validTill);
     }

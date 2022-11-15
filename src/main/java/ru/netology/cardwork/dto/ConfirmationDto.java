@@ -13,8 +13,16 @@ import javax.validation.constraints.NotBlank;
 @Slf4j
 @Validated
 public class ConfirmationDto {
+    /**
+     * The previously defined identifier of the transaction
+     * used to refer to it.
+     */
     @NotBlank
     private final String operationId;
+
+    /**
+     * The code to confirm the execution of the transfer.
+     */
     @NotBlank
     private final String code;
 

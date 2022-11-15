@@ -64,7 +64,6 @@ public class Account {
     public boolean isActive() {
         return isActive;
     }
-
     /**
      * Sets this account active.
      * @return this activated account for chain usage.
@@ -73,7 +72,6 @@ public class Account {
         isActive = true;
         return this;
     }
-
     /**
      * Sets this account inactive.
      * @return this disactivated account for chain usage.
@@ -86,7 +84,7 @@ public class Account {
     /**
      * Sets contact data for this account. If they already present, get replaced.
      * @param contactData contact data for the account.
-     * @return this renewd account for chain usage.
+     * @return this renewed account for chain usage.
      */
     public Account setContactData(String contactData) {
         this.contactData = contactData;

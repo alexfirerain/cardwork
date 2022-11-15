@@ -13,7 +13,7 @@ import ru.netology.cardwork.model.Card;
  * associated cards and hold contact data to get in touch with its owner.
  * An implementation of this interface must be able to check possibility
  * of an offered transfer and able to commit it.
- * Also it will report of owner's contact data.
+ * Also, it will report of owner's contact data.
  */
 public interface TransferSuitableRepository {
 
