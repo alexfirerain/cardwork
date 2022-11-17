@@ -66,7 +66,7 @@ public class Account {
     }
     /**
      * Sets this account active.
-     * @return this activated account for chain usage.
+     * @return this activated account for chained usage.
      */
     public Account setActive() {
         isActive = true;
@@ -74,7 +74,7 @@ public class Account {
     }
     /**
      * Sets this account inactive.
-     * @return this disactivated account for chain usage.
+     * @return this disactivated account for chained usage.
      */
     public Account setInactive() {
         isActive = false;
@@ -84,7 +84,7 @@ public class Account {
     /**
      * Sets contact data for this account. If they already present, get replaced.
      * @param contactData contact data for the account.
-     * @return this renewed account for chain usage.
+     * @return this renewed account for chained usage.
      */
     public Account setContactData(String contactData) {
         this.contactData = contactData;
@@ -114,7 +114,7 @@ public class Account {
 
     /**
      * Adds a new empty subaccount in given currency.
-     * If such subaccount already present, its old value gets erased.
+     * If such a subaccount already present, its old value gets erased.
      * @param currency a naming code of currency for the subaccount.
      * @return  this renewed account.
      */
@@ -125,7 +125,7 @@ public class Account {
 
     /**
      * Adds a new subaccount in given currency with given initial value.
-     * If such subaccount already present, its old value gets lost.
+     * If such a subaccount already present, its old value gets lost.
      * @param currency a naming code of currency for the subaccount.
      * @return  this renewed account.
      */

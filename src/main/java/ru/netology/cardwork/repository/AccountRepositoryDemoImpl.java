@@ -45,9 +45,9 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         addAccounts(DemoData.ALL_ACCOUNTS);
     }
 
-/*
-    Methods managing Entities.
- */
+/////////////////////////////////////
+//    Methods managing Entities    //
+/////////////////////////////////////
 
     /**
      * Puts a Card object to the repository as a new active Account, assuming contactData
@@ -140,11 +140,11 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * and if this card holds enough funds to commit this transfer.
      * If any of conditions is not met, throws an exception with a description of the problem.
      * @param request a Transfer object to be checked.
-     * @throws CardNotFoundException    if the donor card is absent in repository.
+     * @throws CardNotFoundException    if the donor card is absent in the repository.
      * @throws CardDataNotValidException    if validation of the donor card fails.
      * @throws TransferNotPossibleException    if the recipient card is absent,
      *  or any of cards is not active or does not have a subaccount in required currency,
-     *  also if source and target cards coinside.
+     *  also if source and target cards coincide.
      * @throws FundsInsufficientException   if the donor card doesn't possess
      * enough funds to commit the transaction (counting commission in).
      */
@@ -187,11 +187,11 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * If something went wrong, throws a problem description.
      * @param transferToCommit a model of the operation to be performed.
      * @param commissionRate a rate of commission to be charged in favor of bank.
-     * @throws CardNotFoundException    if the donor card is absent in repository.
+     * @throws CardNotFoundException    if the donor card is absent in a repository.
      * @throws CardDataNotValidException    if validation of the donor card fails.
      * @throws TransferNotPossibleException    if the recipient card is absent,
      *  or any of cards is not active or does not have a subaccount in required currency,
-     *  also if source and target cards coinside.
+     *  also if source and target cards coincide.
      * @throws FundsInsufficientException   if the donor card doesn't possess
      * enough funds to commit the transaction (counting commission in).
      * @throws IllegalStateException    if the transaction was rolled back for some reason.
@@ -237,11 +237,9 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
     }
 
 
-
-
-    /*
-        Auxiliary internal functions.
-     */
+///////////////////////////////////////////
+//      Auxiliary internal functions     //
+///////////////////////////////////////////
     /**
      * Retrieves from the repository a Card object which has given number.
      * @param number a card number in question.

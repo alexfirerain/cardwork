@@ -9,13 +9,15 @@ import org.springframework.validation.annotation.Validated;
 import javax.validation.constraints.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * A model object representation of a bank card
  * which serves as a key when storing accounts.
  * Contains a card number (as string), a date this card is valid till
- * (interconvertible with a corresponding string of the MM/YY form)
+ * (interconvertible with a corresponding string in the form of MM/YY inclusive)
  * and a so-called card CVV (one more string).
  */
 @Getter
@@ -33,15 +35,15 @@ public class Card {
     private String cardNumber;
 
     /**
-     * A month and a year this card is valid till (stored as a date
+     * Last month and year when this card is valid (stored as a date
      * but can be set or presented as a string in a MM/YY pattern).
-     * In current implementation, the stored month means the first month
-     * when the card is NOT valid anymore. If you want the month
-     * to be understood as inclusive, the implementation is to be changed.
+     *
      */
     @NotNull(message = "должен быть указан срок действия")
     @Future(message = "карта просрочена")
     private Date validTill;
+    // TODO: надо чтобы просроченная карта могла быть создана и существовать,
+    //  только чтобы не проходила валидацию уже для операций
 
     /**
      * A special 'Card Verification Value', an additional string to identify the card.
@@ -60,7 +62,7 @@ public class Card {
     /**
      * A definition of a bank Card via three strings.
      * @param cardNumber    the card's unique id number.
-     * @param validTill     month and year in future when the card expires.
+     * @param validTill     the month and year for which the card is valid inclusive.
      *                      If the pattern received not recognized, the zero-date is set.
      * @param cardCVV       an additional CVV of the card.
      */
@@ -69,12 +71,17 @@ public class Card {
                 String cardCVV) {
 
         this.cardNumber = cardNumber;
+
         try {
-            this.validTill = MONTH_YEAR_FORMATTER.parse(validTill);
+            Calendar calendar = new GregorianCalendar();
+            calendar.setTime(MONTH_YEAR_FORMATTER.parse(validTill));
+            calendar.add(Calendar.MONTH, 1);
+            this.validTill = calendar.getTime();
         } catch (ParseException e) {
             log.warn("the date pattern not recognized, a zero date is set to card#{}", cardNumber);
             this.validTill = new Date(0L);
         }
+
         this.cardCVV = cardCVV;
 
         log.trace("Card constructed: {}", this);
@@ -91,6 +98,9 @@ public class Card {
      * @return a string representation of month and year of card's being valid.
      */
     public String getValidTillString() {
-        return MONTH_YEAR_FORMATTER.format(validTill);
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(validTill);
+        calendar.add(Calendar.MONTH, -1);
+        return MONTH_YEAR_FORMATTER.format(calendar.getTime());
     }
 }

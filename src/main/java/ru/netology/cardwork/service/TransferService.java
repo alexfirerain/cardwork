@@ -91,7 +91,7 @@ public class TransferService {
      * @param confirmation a confirmation object received.
      * @return  a new OperationIdDto with the performed operation's ID. If something wrong, throws an exception.
      */
-    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {     // TODO: wrap in Response Entity
+    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {     // TODO: обернуть в Response Entity?
         log.debug("Transfer Service received a confirmation: {}", confirmation);
         String operationId = confirmation.getOperationId();
 
