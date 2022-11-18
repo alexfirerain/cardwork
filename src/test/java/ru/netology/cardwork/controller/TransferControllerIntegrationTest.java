@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.netology.cardwork.dto.OperationIdDto;
 import ru.netology.cardwork.service.TransferService;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -28,7 +28,7 @@ class TransferControllerIntegrationTest {
 
     @Test
     void acceptTransferRequest() throws Exception {
-        when(transferService.bidTransferRequest(TRANSFER_1))
+        when(transferService.bidTransferRequest(any()))
                 .thenReturn(new OperationIdDto("0"));
 
         mockMvc.perform(
@@ -38,10 +38,8 @@ class TransferControllerIntegrationTest {
                         .content(TRANSFER_1.toJson()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$['operationId']").value("0"))
-//                .andExpect(jsonPath("$[0]", hasSize(1)))
-                .andReturn().getResponse().getContentAsString()
-        ;
+                .andExpect(jsonPath("$.operationId").value("0"))
+                .andReturn();
     }
 
     @Test
