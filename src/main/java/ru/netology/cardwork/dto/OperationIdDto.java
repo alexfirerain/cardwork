@@ -3,6 +3,8 @@ package ru.netology.cardwork.dto;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Objects;
+
 /**
  * Identifier of the transaction assigned by the Service
  * and being used for addressing to that transaction while exchanging with messages
@@ -24,5 +26,18 @@ public class OperationIdDto {
     @Override
     public String toString() {
         return '{' + operationId + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OperationIdDto that = (OperationIdDto) o;
+        return operationId.equals(that.operationId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operationId);
     }
 }

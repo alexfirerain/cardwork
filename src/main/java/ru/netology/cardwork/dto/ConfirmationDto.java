@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.constraints.NotBlank;
+import java.util.Objects;
 
 /**
  * A transient object for accepting a verification code from the front-side.
@@ -35,5 +36,18 @@ public class ConfirmationDto {
     @Override
     public String toString() {
         return '{' + operationId + ':' + code + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConfirmationDto that = (ConfirmationDto) o;
+        return operationId.equals(that.operationId) && code.equals(that.code);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(operationId, code);
     }
 }
