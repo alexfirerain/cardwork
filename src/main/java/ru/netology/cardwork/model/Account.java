@@ -72,7 +72,7 @@ public class Account {
         isActive = true;
         return this;
     }
-    /**
+        /**
      * Sets this account inactive.
      * @return this disactivated account for chained usage.
      */

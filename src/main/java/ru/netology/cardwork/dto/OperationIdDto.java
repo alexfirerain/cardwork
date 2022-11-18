@@ -16,7 +16,7 @@ public class OperationIdDto {
     /**
      * A token to signify the operation
      */
-    private final String operationId;
+    public final String operationId;
 
     public OperationIdDto(String operationId) {
         this.operationId = operationId;

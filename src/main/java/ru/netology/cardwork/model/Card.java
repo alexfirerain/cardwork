@@ -103,4 +103,13 @@ public class Card {
         calendar.add(Calendar.MONTH, -1);
         return MONTH_YEAR_FORMATTER.format(calendar.getTime());
     }
+
+    /**
+     * Assures the card to be valid at a pointed moment of time.
+     * @param pointInTime a moment of time to be checked.
+     * @return {@code true} if the card is valid at the offered moment.
+     */
+    public boolean isValidAt(Date pointInTime) {
+        return validTill.after(pointInTime);
+    }
 }

@@ -104,4 +104,19 @@ public class Transfer {
         return "Transfer {%s} #%s → #%s"
                 .formatted(transferAmount.toString(), cardFrom.getCardNumber(), cardTo);
     }
+
+    public String toJson() {
+        return ("{  \"cardFromNumber\": \"%s\"," +
+                "  \"cardFromValidTill\": \"%s\"," +
+                "  \"cardFromCVV\": \"%s\"," +
+                "  \"cardToNumber\": \"%s\"," +
+                "  \"amount\": {    \"value\": %d," +
+                "    \"currency\": \"%s\"  }}")
+                .formatted(cardFrom.getCardNumber(),
+                        cardFrom.getValidTillString(),
+                        cardFrom.getCardCVV(),
+                        cardTo,
+                        transferAmount.getValue(),
+                        transferAmount.getCurrency());
+    }
 }
