@@ -17,15 +17,13 @@ import static ru.netology.cardwork.repository.DemoData.*;
 class TransferControllerTest {
 
     private TransferController transferController;
-    private TransferService transferService;
+    private final TransferService transferService = Mockito.mock(TransferService.class);
     public static final Transfer TRANSFER_1 =
             Transfer.forDemoData(CARD_1, CARD_2, 5000);
 
     @BeforeEach
     void setUp() {
-        transferService = Mockito.mock(TransferService.class);
         transferController = new TransferController(transferService);
-
     }
 
     @Test

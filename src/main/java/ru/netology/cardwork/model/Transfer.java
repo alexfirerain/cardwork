@@ -1,5 +1,6 @@
 package ru.netology.cardwork.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,6 +14,7 @@ import javax.validation.constraints.Pattern;
  * a target card's number and an 'Transfer Amount' object
  * representing the matter to be transacted.
  */
+@EqualsAndHashCode
 @Getter
 @Slf4j
 public class Transfer {
@@ -84,7 +86,7 @@ public class Transfer {
      * and an amount to transfer in kopecks (having a "RUR" currency as default).
      * @param cardFrom       a card the transfer is performed from.
      * @param cardTo    a card the transfer is performed to.
-     * @param transferAmount    an amount in kopeks to be transferred.
+     * @param transferAmount    an amount in kopecks to be transferred.
      * @return  a new defined Transfer object.
      */
     public static Transfer forDemoData(Card cardFrom,
@@ -106,12 +108,12 @@ public class Transfer {
     }
 
     public String toJson() {
-        return ("{  \"cardFromNumber\": \"%s\"," +
-                "  \"cardFromValidTill\": \"%s\"," +
-                "  \"cardFromCVV\": \"%s\"," +
-                "  \"cardToNumber\": \"%s\"," +
-                "  \"amount\": {    \"value\": %d," +
-                "    \"currency\": \"%s\"  }}")
+        return ("{ \"cardFromNumber\": \"%s\"," +
+                " \"cardFromValidTill\": \"%s\"," +
+                " \"cardFromCVV\": \"%s\"," +
+                " \"cardToNumber\": \"%s\"," +
+                " \"amount\": { \"value\": %d," +
+                " \"currency\": \"%s\" } }")
                 .formatted(cardFrom.getCardNumber(),
                         cardFrom.getValidTillString(),
                         cardFrom.getCardCVV(),

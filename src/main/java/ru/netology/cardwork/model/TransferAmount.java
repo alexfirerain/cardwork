@@ -1,5 +1,6 @@
 package ru.netology.cardwork.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Positive;
 /**
  * Representation for the particular transfer's properties: amount & currency.
  */
+@EqualsAndHashCode
 @Getter
 @Slf4j
 @Validated
@@ -38,4 +40,5 @@ public class TransferAmount {
     public String toString() {
         return "%.2f %s".formatted(value / 100., currency);
     }
+
 }

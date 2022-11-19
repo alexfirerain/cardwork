@@ -20,8 +20,8 @@ import java.util.GregorianCalendar;
  * (interconvertible with a corresponding string in the form of MM/YY inclusive)
  * and a so-called card CVV (one more string).
  */
-@Getter
 @EqualsAndHashCode
+@Getter
 @NoArgsConstructor
 @Slf4j
 @Validated
@@ -112,4 +112,5 @@ public class Card {
     public boolean isValidAt(Date pointInTime) {
         return validTill.after(pointInTime);
     }
+
 }
