@@ -1,5 +1,6 @@
 package ru.netology.cardwork.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +19,7 @@ public class OperationIdDto {
      */
     public final String operationId;
 
-    public OperationIdDto(String operationId) {
+    public OperationIdDto(@JsonProperty("operationId") String operationId) {
         this.operationId = operationId;
         log.trace("OperationId generated: {}", this);
     }
