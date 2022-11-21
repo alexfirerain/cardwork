@@ -41,6 +41,7 @@ public class ExceptionController {
     ResponseEntity<ErrorResponseDto> handleBadRequest(Exception bad) {
         log.debug("Caught an exception: {}", bad.getClass());
         String report = bad.getLocalizedMessage();
+        log.trace("Original message of exception: {}", report);
         if (bad instanceof MethodArgumentNotValidException) {                                               // ???
             report = report.substring(report.lastIndexOf("[") + 1, report.lastIndexOf("]]"));
         } else if (bad instanceof HttpMessageNotReadableException) {

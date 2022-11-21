@@ -1,5 +1,7 @@
 server:
   port: 5500
+  error:
+    include-message: always
 
 logging:
   level:
@@ -13,5 +15,5 @@ logging:
 
 application:
   commission: 0.01
-#  front-url: "https://serp-ya.github.io"
-  front-url: "http://localhost:3000"
+  front-url: "https://serp-ya.github.io"
+#  front-url: "http://localhost:3000"

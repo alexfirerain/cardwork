@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
-import ru.netology.cardwork.dto.Transfer;
+import ru.netology.cardwork.model.Transfer;
 import ru.netology.cardwork.exception.VerificationFailureException;
 import ru.netology.cardwork.providers.id.OperationIdProvider;
 import ru.netology.cardwork.providers.verification.VerificationProvider;
@@ -60,7 +60,7 @@ public class TransferService {
         this.verificationProvider = verificationProvider;
         this.repository = repository;
         transfersInService = new ConcurrentHashMap<>();
-//        COMMISSION_RATE = env.getProperty("${commission}");
+//        COMMISSION_RATE = env.getProperty("${application.commission}");
 
         log.trace("A Transfer Service initialized");
     }
@@ -91,7 +91,7 @@ public class TransferService {
      * @param confirmation a confirmation object received.
      * @return  a new OperationIdDto with the performed operation's ID. If something wrong, throws an exception.
      */
-    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {     // TODO: wrap in Response Entity
+    public OperationIdDto commitTransferRequest(ConfirmationDto confirmation) {     // TODO: обернуть в Response Entity?
         log.debug("Transfer Service received a confirmation: {}", confirmation);
         String operationId = confirmation.getOperationId();
 

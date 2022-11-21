@@ -1,90 +1,46 @@
 package ru.netology.cardwork.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
-import ru.netology.cardwork.dto.Transfer;
-import ru.netology.cardwork.exception.CardNotFoundException;
+import ru.netology.cardwork.model.Transfer;
+import ru.netology.cardwork.providers.verification.VerificationProviderDemoImpl;
 import ru.netology.cardwork.service.TransferService;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static ru.netology.cardwork.repository.DemoData.*;
 
-//@RunWith(SpringRunner.class)
-@WebMvcTest(TransferController.class)
 class TransferControllerTest {
 
-    @Autowired
-    MockMvc mockMvc;
-    @Autowired
-    ObjectMapper mapper;
-
-    @Autowired
-    TransferController transferController;
-
-    @MockBean
-    TransferService transferService;
-
-    Transfer TRANSFER_1 = new Transfer(CARD_1, CARD_2, 500);
+    private TransferController transferController;
+    private final TransferService transferService = Mockito.mock(TransferService.class);
+    public static final Transfer TRANSFER_1 =
+            Transfer.forDemoData(CARD_1, CARD_2, 5000);
 
     @BeforeEach
     void setUp() {
-        Mockito
-            .when(transferService.bidTransferRequest(TRANSFER_1))
-            .thenReturn(new OperationIdDto("0"));
+        transferController = new TransferController(transferService);
     }
 
-//    @Test
-//    void request_accepts() throws Exception {
-//        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/transfer")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(this.mapper.writeValueAsString(TRANSFER_1));
-//
-//
-//
-//        mockMvc.perform(mockRequest)
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$", notNullValue()))
-//                .andExpect(jsonPath("$.operationId", is("0")));
-//
-//    }
+    @Test
+    void at_1stRequest_returnsId0Dto() {
+        OperationIdDto expected = new OperationIdDto("0");
+        when(transferService.bidTransferRequest(any())).thenReturn(expected);
 
-//    @Test
-//    void requestFails_ifCardNotFound() throws Exception {
-//        MockHttpServletRequestBuilder mockRequest = MockMvcRequestBuilders.post("/transfer")
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(this.mapper.writeValueAsString(TRANSFER_1));
-//
-//        mockMvc.perform(mockRequest)
-//                .andExpect(status().isBadRequest())
-//                .andExpect(result ->
-//                        assertTrue(result.getResolvedException() instanceof CardNotFoundException))
-//                .andExpect(result ->
-//                        assertEquals("", result.getResolvedException().getMessage()));
-//
-//    }
+        assertEquals(expected, transferController.acceptTransferRequest(TRANSFER_1));
+    }
 
-//    @Test
-//    void confirmTransferRequest() {
-//    }
+    @Test
+    void at_successfulConfirmation_returnsIdSameDto() {
+        OperationIdDto expected = new OperationIdDto("7");
+        ConfirmationDto confirmation = new ConfirmationDto("7",
+                                                VerificationProviderDemoImpl.provideACode());
+        when(transferService.commitTransferRequest(confirmation)).thenReturn(expected);
+
+        assertEquals(expected, transferController.confirmTransferRequest(confirmation));
+    }
 }

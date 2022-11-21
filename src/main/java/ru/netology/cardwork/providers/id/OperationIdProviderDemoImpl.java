@@ -5,9 +5,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * A simple implementation of OperationId generator producing simple consequent numbers.
+ */
 @Component
 @Slf4j
 public class OperationIdProviderDemoImpl implements OperationIdProvider {
+
+    // TODO: сделать синглетоном?
 
     /**
      * A counter to serve a next number as an ID.
@@ -27,10 +32,18 @@ public class OperationIdProviderDemoImpl implements OperationIdProvider {
         return String.valueOf(next);
     }
 
-    public long checkCurrentId() {
+    /**
+     * Reports the ID that is to be assigned at next invocation.
+     * @return  the next ID to be assigned for a transaction.
+     */
+    public static long checkCurrentId() {
         return idCount.get();
     }
-    public void resetCount() {
+
+    /**
+     * Resets the ID-counter to 0.
+     */
+    public static void resetCount() {
         idCount.set(0);
     }
 }

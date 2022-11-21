@@ -3,7 +3,9 @@ package ru.netology.cardwork.repository;
 import ru.netology.cardwork.model.Account;
 import ru.netology.cardwork.model.Card;
 
-
+/**
+ * A container for demo cards and accounts data.
+ */
 public class DemoData {
     public static final Card CARD_1 = new Card("1234567812345678", "03/25", "125");
     public static final Card CARD_2 = new Card("8765432187654321", "08/25", "555");

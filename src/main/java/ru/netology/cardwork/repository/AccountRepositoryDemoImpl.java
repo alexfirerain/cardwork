@@ -2,7 +2,7 @@ package ru.netology.cardwork.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.netology.cardwork.dto.Transfer;
+import ru.netology.cardwork.model.Transfer;
 import ru.netology.cardwork.exception.CardDataNotValidException;
 import ru.netology.cardwork.exception.CardNotFoundException;
 import ru.netology.cardwork.exception.FundsInsufficientException;
@@ -28,16 +28,26 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      */
     private final Map<String, Account> accounts = new ConcurrentHashMap<>();
 
+    /**
+     * A bunch of special currency subaccounts that accumulate the commission fees
+     * on transfers that charged in favor of bank.
+     * The given implementation has no tools to access this funds,
+     * they just get accumulated here and stored.
+     */
     private final Map<String, Integer> commissionAccount = new ConcurrentHashMap<>();
 
+    /**
+     * Creates a new demo account repository
+     * and uploads in it the data defined in the DemoData class.
+     */
     public AccountRepositoryDemoImpl() {
         // TODO: как это кошернее всего реализовать для тестового профиля?
         addAccounts(DemoData.ALL_ACCOUNTS);
     }
 
-/*
-    Methods managing Entities.
- */
+/////////////////////////////////////
+//    Methods managing Entities    //
+/////////////////////////////////////
 
     /**
      * Puts a Card object to the repository as a new active Account, assuming contactData
@@ -65,6 +75,7 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
         accounts.put(account.getCardNumber(), account);
         log.info("Have account written to the base: {}", account);
     }
+
 
     @Override
     public void addAccounts(Account[] accounts) {
@@ -127,8 +138,15 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
      * different and both cards are present, active and capable for required currency,
      * if data of donor card are valid against the corresponding in the repository,
      * and if this card holds enough funds to commit this transfer.
-     * If any of conditions is not met, throws an exception.
+     * If any of conditions is not met, throws an exception with a description of the problem.
      * @param request a Transfer object to be checked.
+     * @throws CardNotFoundException    if the donor card is absent in the repository.
+     * @throws CardDataNotValidException    if validation of the donor card fails.
+     * @throws TransferNotPossibleException    if the recipient card is absent,
+     *  or any of cards is not active or does not have a subaccount in required currency,
+     *  also if source and target cards coincide.
+     * @throws FundsInsufficientException   if the donor card doesn't possess
+     * enough funds to commit the transaction (counting commission in).
      */
     @Override
     public void checkTransferPossibility(Transfer request, double commissionRate) throws CardNotFoundException,
@@ -156,25 +174,41 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
 
         int sumRequired = (int) Math.round(request.getTransferAmount().getValue() * (1 + commissionRate));
         if(sumRequired > howManyFundsHas(donorCard, currency)) {
-            log.warn("There's not enough funds at the card#{} for such a transfer", donorNumber);
+            log.warn("There's not enough funds at the card #{} for such a transfer", donorNumber);
             throw new FundsInsufficientException("Не достаточно средств.");
         }
 
 
     }
 
+    /**
+     * Commits the requested transferring of funds between accounts regarding the specified commission rate.
+     * Simulates transactionality by checking that new state of accounts is as expected, rolling it back otherwise.
+     * If something went wrong, throws a problem description.
+     * @param transferToCommit a model of the operation to be performed.
+     * @param commissionRate a rate of commission to be charged in favor of bank.
+     * @throws CardNotFoundException    if the donor card is absent in a repository.
+     * @throws CardDataNotValidException    if validation of the donor card fails.
+     * @throws TransferNotPossibleException    if the recipient card is absent,
+     *  or any of cards is not active or does not have a subaccount in required currency,
+     *  also if source and target cards coincide.
+     * @throws FundsInsufficientException   if the donor card doesn't possess
+     * enough funds to commit the transaction (counting commission in).
+     * @throws IllegalStateException    if the transaction was rolled back for some reason.
+     */
     @Override
     public void commitTransfer(Transfer transferToCommit, double commissionRate) {
         checkTransferPossibility(transferToCommit, commissionRate);
 
         // transaction imitation
         Card donorCard = transferToCommit.getCardFrom();
+        Account donorAccount = getAccountByCard(donorCard);
         Card acceptorCard = getCardByNumber(transferToCommit.getCardTo());
+        Account acceptorAccount = getAccountByCard(acceptorCard);
+        String currency = transferToCommit.getTransferAmount().getCurrency();
+
         int amount = transferToCommit.getTransferAmount().getValue();
         int commissionAmount = (int) Math.round(amount * commissionRate);
-        String currency = transferToCommit.getTransferAmount().getCurrency();
-        Account donorAccount = getAccountByCard(donorCard);
-        Account acceptorAccount = getAccountByCard(acceptorCard);
 
         int oldDonorValue = howManyFundsHas(donorCard, currency);
         int oldAcceptorValue = howManyFundsHas(acceptorCard, currency);
@@ -203,11 +237,9 @@ public class AccountRepositoryDemoImpl implements TransferSuitableRepository,
     }
 
 
-
-
-    /*
-        Auxiliary internal functions.
-     */
+///////////////////////////////////////////
+//      Auxiliary internal functions     //
+///////////////////////////////////////////
     /**
      * Retrieves from the repository a Card object which has given number.
      * @param number a card number in question.

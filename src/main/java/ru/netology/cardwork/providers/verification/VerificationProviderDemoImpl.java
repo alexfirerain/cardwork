@@ -2,19 +2,26 @@ package ru.netology.cardwork.providers.verification;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.netology.cardwork.dto.Transfer;
+import ru.netology.cardwork.model.Transfer;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * A simple implementation of the Verification Provider.
+ * It holds a known string constant and reports OK
+ * when the code to be verified coincides with it.
+ */
 @Component
 @Slf4j
 public class VerificationProviderDemoImpl implements VerificationProvider {
+
+    // TODO: сделать синглетоном?
 
     /**
      * This implementation always supplies the same code, defined by this constant.
      */
     @NotBlank(message = "код подтверждения не может быть пуст")
-    public static final String CONSTANT = "0000";
+    private static final String CONSTANT = "0000";
 
     /**
      * This implementation does nothing, just implying generating of a new code and sending it to the address somehow.
@@ -36,5 +43,9 @@ public class VerificationProviderDemoImpl implements VerificationProvider {
     public boolean isValidCodeForOperation(Transfer dealToCommit,
                                            @NotBlank(message = "код подтверждения пуст") String codeReceived) {
         return CONSTANT.equals(codeReceived);
+    }
+
+    public static String provideACode() {
+        return CONSTANT;
     }
 }
