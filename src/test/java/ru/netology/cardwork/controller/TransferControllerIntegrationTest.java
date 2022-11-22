@@ -9,7 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
-import ru.netology.cardwork.providers.id.OperationIdProvider;
 import ru.netology.cardwork.providers.verification.VerificationProviderDemoImpl;
 import ru.netology.cardwork.service.TransferService;
 
@@ -19,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.netology.cardwork.controller.TransferControllerTest.TRANSFER_1;
+import static ru.netology.cardwork.repository.DemoData.TRANSFER_1;
 
 @WebMvcTest
 class TransferControllerIntegrationTest {

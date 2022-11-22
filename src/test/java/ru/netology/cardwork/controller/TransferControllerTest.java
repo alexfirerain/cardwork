@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import ru.netology.cardwork.dto.ConfirmationDto;
 import ru.netology.cardwork.dto.OperationIdDto;
-import ru.netology.cardwork.model.Transfer;
 import ru.netology.cardwork.providers.verification.VerificationProviderDemoImpl;
 import ru.netology.cardwork.service.TransferService;
 
@@ -18,8 +17,6 @@ class TransferControllerTest {
 
     private TransferController transferController;
     private final TransferService transferService = Mockito.mock(TransferService.class);
-    public static final Transfer TRANSFER_1 =
-            Transfer.forDemoData(CARD_1, CARD_2, 5000);
 
     @BeforeEach
     void setUp() {

@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static ru.netology.cardwork.controller.TransferControllerTest.TRANSFER_1;
+import static ru.netology.cardwork.repository.DemoData.TRANSFER_1;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -65,7 +65,7 @@ class TransferControllerAcceptanceTest {
         OperationIdDto result = mapper.readValue(response, OperationIdDto.class);
 
         // then we send a confirmation with matching operationID
-        // and assure that we receive a response with matching ID
+        // and assure that we receive a response with that very ID again
         mockMvc.perform(
                     post("/confirmOperation")
                             .contentType(MediaType.APPLICATION_JSON)
