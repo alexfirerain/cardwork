@@ -26,7 +26,7 @@ class TransferControllerAcceptanceTest {
 
 
     @Test
-    void acceptTransferRequest() throws Exception {
+    void accepts_validRequest() throws Exception {
 
         // define which operationID is about to be set for the transfer to come
         String operationID = String.valueOf(OperationIdProviderDemoImpl.checkCurrentId());
@@ -44,7 +44,7 @@ class TransferControllerAcceptanceTest {
 
 
     @Test
-    void confirmTransferRequest() throws Exception {
+    void confirms_validRequest() throws Exception {
 
         ObjectMapper mapper = new ObjectMapper();
 

@@ -26,23 +26,23 @@ public class VerificationProviderDemoImpl implements VerificationProvider {
     /**
      * This implementation does nothing, just implying generating of a new code and sending it to the address somehow.
      * @param request             a transfer request which the code is generated for (plays no role in the impl).
-     * @param confirmationAddress an address which the verification is meant to be sent on (plays no role in the impl).
+     * @param contactData an address which the verification request is meant to be sent on (plays no role in the impl).
      */
     @Override
-    public void performVerificationProcedure(Transfer request, String confirmationAddress) {
+    public void performVerificationProcedure(Transfer request, String contactData) {
         log.info("verification process simulated");
     }
 
     /**
      * Reports if received code coincides with the constant or not.
      * @param dealToCommit a pending operation waiting to be confirmed (plays no role in the impl).
-     * @param codeReceived a given code to be compared.
+     * @param codeToCheck a given code to be compared.
      * @return whether the code is right.
      */
     @Override
     public boolean isValidCodeForOperation(Transfer dealToCommit,
-                                           @NotBlank(message = "код подтверждения пуст") String codeReceived) {
-        return CONSTANT.equals(codeReceived);
+                                           @NotBlank(message = "код подтверждения пуст") String codeToCheck) {
+        return CONSTANT.equals(codeToCheck);
     }
 
     public static String provideACode() {
