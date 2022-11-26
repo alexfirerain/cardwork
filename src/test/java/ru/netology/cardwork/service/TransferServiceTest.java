@@ -62,6 +62,6 @@ class TransferServiceTest {
                 () -> transferService.commitTransferRequest(confirmationDto));
 
         verify(verificationMock, never()).isValidCodeForOperation(any(), any());
-//        verify(repositoryMock, never()).commitTransfer(any(), any());
+        verify(repositoryMock, never()).commitTransfer(any(), anyDouble());
     }
 }

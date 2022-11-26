@@ -68,7 +68,7 @@ public class TransferService {
     /**
      * Accepts a request for transfer, checks in repository if such a transfer is possible,
      * if ok, assigns it to a new operation id (provided via corresponding provider),
-     * sets it to the wait list and initiates a verification procedure (via corresponding provider).
+     * sets it to the wait list and initiates a verification procedure (via a plugged provider).
      * @param request a request being handled.
      * @return  an OperationIdDto object wrapping newly assigned operation id.
      */
