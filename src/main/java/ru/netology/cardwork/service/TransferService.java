@@ -100,16 +100,16 @@ public class TransferService {
             throw new IllegalStateException("Нет операции для подтверждения.");
         }
 
-        Transfer dealToCommit = transfersInService.remove(operationId);
+        Transfer dealToCommit = transfersInService.get(operationId);
 
         if (!verificationProvider.isValidCodeForOperation(dealToCommit, confirmation.getCode())) {
-            transfersInService.put(operationId, dealToCommit);
             log.warn("A code received does no match to the right one for operation#{}.", operationId);
             throw new VerificationFailureException("Код подтверждения не соответствует.");
         }
 
         repository.commitTransfer(dealToCommit, COMMISSION_RATE);
 
+        transfersInService.remove(operationId);
         log.info("Operation #{} complete: {}",
                                     operationId,
                                     dealToCommit);
