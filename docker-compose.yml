@@ -1,0 +1,14 @@
+version: "3"
+services:
+  cardwork:
+    image:
+      cardwork-app
+    ports:
+      - "5500:5500"
+    volumes:
+      - ./log:/log
+  card-transfer:
+    image:
+      cardtransfer-app
+    ports:
+      - "3000:3000"

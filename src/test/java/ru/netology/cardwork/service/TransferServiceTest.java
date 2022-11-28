@@ -23,8 +23,8 @@ class TransferServiceTest {
 //    @Autowired
     private TransferService transferService;
 
-//    @Value("${application.commission}")
-    private double commission = 0.01;
+//    equals to the TransferService's default - in no connection with global application properties
+    private final double commission = 0.01;
 
     @MockBean
     private OperationIdProvider operationIdMock;
@@ -48,7 +48,7 @@ class TransferServiceTest {
         OperationIdDto expectedOIDto = new OperationIdDto("0");
         OperationIdDto actualOIDto = transferService.bidTransferRequest(TRANSFER_1);
 
-//        verify(repositoryMock).checkTransferPossibility(TRANSFER_1, commission);
+        verify(repositoryMock).checkTransferPossibility(TRANSFER_1, commission);
         verify(verificationMock).performVerificationProcedure(TRANSFER_1, "contact");
         verify(operationIdMock).serveAnOperationId();
         assertEquals(expectedOIDto, actualOIDto);

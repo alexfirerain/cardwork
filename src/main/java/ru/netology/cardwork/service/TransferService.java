@@ -45,7 +45,7 @@ public class TransferService {
      * A commission rate to be charged on transfers as a double value where 1.0 = 100%.
       */
     @Value("${application.commission}")
-    private double COMMISSION_RATE;     // how to make it final? is it needed?
+    private double COMMISSION_RATE = 0.01;     // how to make it final? is it needed?
 
     /**
      * Creates a new transfer service.
